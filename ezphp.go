@@ -7,12 +7,31 @@ import (
     "io"
     "net/http"
     "os"
+    "os/exec"
+    "syscall"
 )
 
 func main() {
     
     fmt.Printf("EzPHP\n")
     
+    path, err := exec.LookPath("php")
+    if err != nil {
+        fmt.Printf("didn't find 'php' executable\n")
+    } else {
+        fmt.Printf("'php' executable is in '%s'\n", path)
+    }
+    
+    args := []string{"php", "-S", "localhost:8888"}
+    env := os.Environ()
+    
+    execErr := syscall.Exec(path, args, env)
+    if execErr != nil {
+        panic(execErr)
+    }
+}
+
+func installPhp() {
     fmt.Printf("Creating PHP Directory\n")
     createDirIfNotExist("php")
     
