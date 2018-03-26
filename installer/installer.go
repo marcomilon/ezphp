@@ -10,36 +10,51 @@ import (
 )
 
 const (
-	PhpDir         = "php"
-	PhpDownloadUrl = "https://windows.php.net/downloads/releases/php-7.2.3-nts-Win32-VC15-x64.zip"
-	PhpZipFile     = "php/php-7.2.3-nts-Win32-VC15-x64.zip"
-	PhpExecutable  = "php"
+	DocumentRoot   = "web"
+	Port           = "8080"
+	phpDir         = "php"
+	phpDownloadUrl = "https://windows.php.net/downloads/releases/php-7.2.3-nts-Win32-VC15-x64.zip"
+	phpZipFile     = "php/php-7.2.3-nts-Win32-VC15-x64.zip"
+	PhpExecutable  = "php.exe"
 )
 
-func Install() (string, error) {
-	banner("Installing PHP. Please wait...")
+type installerError struct {
+	Msg string
+}
 
-	err := createDirIfNotExist(PhpDir)
+func (e *installerError) Error() string {
+	return e.Msg
+}
+
+func Install() (string, error) {
+
+	fmt.Println("[Installer] Installing PHP. Please wait...")
+	err := createDirIfNotExist(phpDir)
 	if err != nil {
 		return "", err
 	}
 
-	err = downloadFile(PhpZipFile, PhpDownloadUrl)
+	err = createDirIfNotExist(DocumentRoot)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	unZipErr := unzip(PhpZipFile, PhpDir)
+	err = downloadFile(phpZipFile, phpDownloadUrl)
+	if err != nil {
+		return "", err
+	}
+
+	unZipErr := unzip(phpZipFile, phpDir)
 	if unZipErr != nil {
 		return "", err
 	}
 
-	path, err := filepath.Abs(filepath.Dir(PhpDir))
+	path, err := filepath.Abs(filepath.Dir(phpDir))
 	if err != nil {
 		return "", err
 	}
 
-	completePath := path + string(os.PathSeparator) + PhpDir + string(os.PathSeparator) + PhpExecutable
+	completePath := path + string(os.PathSeparator) + phpDir + string(os.PathSeparator) + PhpExecutable
 
 	if _, err := os.Stat(completePath); os.IsNotExist(err) {
 		if err != nil {
@@ -68,19 +83,25 @@ func downloadFile(filepath string, url string) error {
 		return nil
 	}
 
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return &installerError{
+			Msg: "Unable to download File: " + url,
+		}
+	}
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
@@ -150,6 +171,19 @@ func unzip(src, dest string) error {
 	return nil
 }
 
-func banner(out string) {
-	fmt.Println("[Installer] " + out)
+func PathToPhp() (string, error) {
+	path, err := filepath.Abs(filepath.Dir(phpDir))
+	if err != nil {
+		return "", err
+	}
+
+	completePath := path + string(os.PathSeparator) + phpDir + string(os.PathSeparator) + PhpExecutable
+
+	if _, err := os.Stat(completePath); os.IsNotExist(err) {
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return completePath, nil
 }
