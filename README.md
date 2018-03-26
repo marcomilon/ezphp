@@ -15,7 +15,7 @@ browser at **http://localhost:8080**
 ### Why i do EzPHP?
 
 XAMP or equivalent environment are difficult to set up for people who are learning to code.
-EzPHP is available on for windows.
+EzPHP is available only for windows.
 
 ### Requirements
 
