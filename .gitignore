@@ -1,2 +1,4 @@
 php
 web
+*.exe
+*.zip
