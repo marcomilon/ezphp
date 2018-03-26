@@ -17,6 +17,12 @@ browser at **http://localhost:8080**
 XAMP or equivalent environment are difficult to set up for people who are learning to code.
 EzPHP is available on for windows.
 
+### Requirements
+
+PHP binaries require to have the Visual C++ Redistributable for Visual Studio 2017.
+You may have installed in your PC. In case you need it you can download it from https://www.microsoft.com/en-us/download/details.aspx?id=48145
+
+
 ### Contribution
 
 Feel free to contribute! Just create a new issue or a new pull request.
