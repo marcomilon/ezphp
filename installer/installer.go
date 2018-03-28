@@ -15,7 +15,7 @@ const (
 	phpDir         = "php"
 	phpDownloadUrl = "https://windows.php.net/downloads/releases/php-7.2.3-nts-Win32-VC15-x64.zip"
 	phpZipFile     = "php/php-7.2.3-nts-Win32-VC15-x64.zip"
-	PhpExecutable  = "php.exe"
+	PhpExecutable  = "php"
 )
 
 type installerError struct {
