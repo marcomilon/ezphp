@@ -2,3 +2,5 @@ php
 web
 *.exe
 *.zip
+*~
+ezphp
