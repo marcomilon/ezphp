@@ -2,7 +2,7 @@ package gui
 
 import (
 	"github.com/gotk3/gotk3/gtk"
-	//"github.com/marcomilon/ezphp/serve"
+	"github.com/marcomilon/ezphp/serve"
     "github.com/marcomilon/ezphp/output"
 	"log"
 )
@@ -33,8 +33,8 @@ func Show() {
 	buffer.InsertAtCursor("[About] https://github.com/marcomilon/ezphp\n")
 
 	if win, okwin := obj.(*gtk.Window); okwin {
-        //o := output.Output{Tv: tv}
-		//go serve.Serve(o)
+        o := output.Output{Tv: tv}
+		go serve.Serve(o)
 		win.Connect("destroy", func() {
 			gtk.MainQuit()
 		})

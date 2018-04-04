@@ -29,9 +29,8 @@ func Serve(output output.Output) {
 
 func servePhp(path string, o output.Output) {
 	command := exec.Command(path, "-S", "localhost:" + installer.Port, "-t", installer.DocumentRoot)
-	command.Stdout = o
 	command.Stderr = o
-	execErr := command.Run()
+	execErr := command.Start()
 	if execErr != nil {
 		fmt.Printf("[Error] Unable to execute PHP: %s\n", execErr.Error())
 		fmt.Printf("[Error] php is located in: %s\n", path)
