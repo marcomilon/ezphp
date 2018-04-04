@@ -3,11 +3,11 @@ package serve
 import (
 	"fmt"
 	"github.com/marcomilon/ezphp/installer"
-	"os"
+    "github.com/marcomilon/ezphp/output"
 	"os/exec"
 )
 
-func Serve() {
+func Serve(output output.Output) {
 
 	path, err := searchPhpBin()
 	if err != nil {
@@ -23,14 +23,14 @@ func Serve() {
 	}
     
     fmt.Printf("[EzPhp] Using php located in: %s\n", path)
-    servePhp(path)
+    servePhp(path, output)
 
 }
 
-func servePhp(path string) {
+func servePhp(path string, o output.Output) {
 	command := exec.Command(path, "-S", "localhost:" + installer.Port, "-t", installer.DocumentRoot)
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
+	command.Stdout = o
+	command.Stderr = o
 	execErr := command.Run()
 	if execErr != nil {
 		fmt.Printf("[Error] Unable to execute PHP: %s\n", execErr.Error())
