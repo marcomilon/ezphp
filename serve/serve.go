@@ -3,39 +3,32 @@ package serve
 import (
 	"fmt"
 	"github.com/marcomilon/ezphp/installer"
-    "github.com/marcomilon/ezphp/output"
 	"os/exec"
 )
 
-func Serve(output output.Output) {
-
-	path, err := searchPhpBin()
-	if err != nil {
-		path, err = installer.PathToPhp()
-		if err != nil {
-			path, err = installer.Install()
-		}
-	}
-
-	if err != nil {
-		fmt.Printf("[Error] %s\n", err.Error())
-		return
-	}
-    
-    fmt.Printf("[EzPhp] Using php located in: %s\n", path)
-    servePhp(path, output)
-
+type writer struct {
+    outChan chan<- string
 }
 
-func servePhp(path string, o output.Output) {
+func (w writer) Write(b []byte) (n int, err error) {
+	s := string(b[0:])
+    w.outChan <- s
+	return len(b), err
+}
+
+func Serve(out chan<- string) {
+    w := writer{outChan: out}
+    path, _ := searchPhpBin()
+    
 	command := exec.Command(path, "-S", "localhost:" + installer.Port, "-t", installer.DocumentRoot)
-	command.Stderr = o
-	execErr := command.Start()
+    command.Stdout = w
+	command.Stderr = w
+    execErr := command.Start()
 	if execErr != nil {
-		fmt.Printf("[Error] Unable to execute PHP: %s\n", execErr.Error())
-		fmt.Printf("[Error] php is located in: %s\n", path)
-        fmt.Println("[Error] php require to have the Visual C++ Redistributable for Visual Studio 2017")
-        fmt.Println("[Error] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
+		fmt.Fprintln(w, "[Error] Unable to execute PHP: %s", execErr.Error())
+		fmt.Fprintln(w, "[Error] php is located in: %s", path)
+        fmt.Fprintln(w, "[Error] php require to have the Visual C++ Redistributable for Visual Studio 2017")
+        fmt.Fprintln(w, "[Error] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
 	}
 }
 
