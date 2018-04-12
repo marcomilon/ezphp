@@ -2,11 +2,10 @@ package gui
 
 import (
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/marcomilon/ezphp/serve"
 	"log"
 )
 
-func Show() {
+func Start() {
 
 	gtk.Init(nil)
 
@@ -39,16 +38,7 @@ func Show() {
 		win.SetTitle("EzPHP")
 		win.SetDefaultSize(800, 600)
 		win.ShowAll()
-
-		out := make(chan string)
-		go serve.Serve(out)
-		go func() {
-			for {
-				s := <-out
-				buffer.InsertAtCursor(s)
-			}
-		}()
-
+        
 	} else {
         
 		log.Fatal("Unable to create window:", err)
