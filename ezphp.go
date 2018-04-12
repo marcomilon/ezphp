@@ -9,7 +9,7 @@ import (
 
 func main() {
     
-    useGui := flag.Int("gui", 1, "Path to php executable")
+    useGui := flag.Int("gui", 0, "Path to php executable")
     path := flag.String("path", "", "Path to php executable")
     host := flag.String("host", "localhost", "Listening address")
     port := flag.String("port", "8080", "Listening port")
