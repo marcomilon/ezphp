@@ -3,7 +3,7 @@ package server
 import (
     "fmt"
     "os/exec"
-    "os"
+    "io"
 )
 
 type Serve struct {
@@ -11,14 +11,16 @@ type Serve struct {
     Host string
     Port string
     DocumentRoot string
+    Stdout io.Writer
+    Stderr io.Writer
     cmd *exec.Cmd
 }
 
-func (s Serve) Start()  {    
+func (s Serve) Run()  {    
     s.cmd = exec.Command(s.Path, "-S", s.Host + ":" + s.Port, "-t", s.DocumentRoot)
-    s.cmd.Stdout = os.Stdout
-    s.cmd.Stderr = os.Stderr
-    execErr := s.cmd.Start()
+    s.cmd.Stdout = s.Stdout
+    s.cmd.Stderr = s.Stderr
+    execErr := s.cmd.Run()
     if execErr != nil {
         fmt.Println("[Error] Unable to execute PHP: %s", execErr.Error())
         fmt.Println("[Error] php is located in: %s", s.Path)
