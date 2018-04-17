@@ -7,6 +7,16 @@ import (
     "os"
 )
 
+type writer struct {
+    msg chan string
+}
+
+func (w writer) Write(b []byte) (n int, err error) {
+	s := string(b[0:])
+    w.msg <- s
+	return len(b), err
+}
+
 func main() {
     
     gui := flag.Int("gui", 0, "Path to php executable")
@@ -24,10 +34,11 @@ func main() {
     s.DocumentRoot = *documentRoot
         
     if *gui == 1 {
-        ui := gtkui.Ui{}
-        go ui.Show()
-        s.Stdout = ui
-        s.Stderr = ui
+        msg := make(chan string)
+        w := writer{msg: msg}
+        go gtkui.Show(msg)
+        s.Stdout = w
+        s.Stderr = w
         s.Run()
     } else {
         s.Stdout = os.Stdout

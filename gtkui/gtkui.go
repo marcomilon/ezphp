@@ -3,20 +3,11 @@ package gtkui
 import (
 	"github.com/gotk3/gotk3/gtk"
 	"log"
+    "os"
+    "fmt"
 )
 
-type Ui struct {
-    Tv *gtk.TextView
-}
-
-func (ui Ui) Write(b []byte) (n int, err error) {    
-    s := string(b[0:])
-    buffer, err := ui.Tv.GetBuffer()
-    buffer.InsertAtCursor(s)
-    return len(b), err
-}
-
-func (ui Ui) Show() {
+func Show(msgChan chan string) {
     
 	gtk.Init(nil)
 
@@ -33,6 +24,7 @@ func (ui Ui) Show() {
 	}
 
 	tv := tvObj.(*gtk.TextView)
+    
 	buffer, err := tv.GetBuffer()
 	if err != nil {
 		log.Fatal("Unable to get buffer:", err)
@@ -40,17 +32,25 @@ func (ui Ui) Show() {
 
 	buffer.SetText("[EzPhp] Launching to EzPHP\n")
 	buffer.InsertAtCursor("[About] https://github.com/marcomilon/ezphp\n")
-    ui.Tv = tv
-
+    
 	if win, okwin := obj.(*gtk.Window); okwin {
 
 		win.Connect("destroy", func() {
+            fmt.Println("Bye Bye")
 			gtk.MainQuit()
+            os.Exit(0)
 		})
 		win.SetTitle("EzPHP")
 		win.SetDefaultSize(800, 600)
 		win.ShowAll()
         
+        go func() {
+			for {
+				s := <- msgChan
+				buffer.InsertAtCursor(s)
+			}
+		}()
+             
 	} else {
         
 		log.Fatal("Unable to create window:", err)
