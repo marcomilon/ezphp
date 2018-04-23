@@ -1,56 +1,56 @@
 package main
 
 import (
-    "flag"
-    "github.com/marcomilon/ezphp/server"
-    "github.com/marcomilon/ezphp/gtkui"
-    "os"
+	"flag"
+	"github.com/marcomilon/ezphp/gtkui"
+	"github.com/marcomilon/ezphp/server"
+	"os"
+	"os/exec"
 )
 
-type writer struct {
-    msg chan string
-}
-
-func (w writer) Write(b []byte) (n int, err error) {
-	s := string(b[0:])
-    w.msg <- s
-	return len(b), err
-}
-
 func main() {
-    
-    gui := flag.Int("gui", 0, "Path to php executable")
-    path := flag.String("path", "", "Path to php executable")
-    host := flag.String("host", "localhost", "Listening address")
-    port := flag.String("port", "8080", "Listening port")
-    documentRoot := flag.String("documentRoot", "web", "Specify document root")
-    
-    flag.Parse()
-    
-    s := server.Serve{}
-    s.Path = *path
-    s.Host = *host
-    s.Port = *port
-    s.DocumentRoot = *documentRoot
+
+	ui := flag.String("ui", "cli", "Launch ezphp with gui or console <gui:cli>")
+	php := flag.String("php", "/usr/bin/php", "Path to php executable")
+	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
+	public := flag.String("public", "web", "Path to public directory")
+
+	flag.Parse()
+
+	args := server.Args{
+		Php:    *php,
+		Host:   *host,
+		Public: *public,
+	}
+
+	uiInterface := *ui
+
+	switch uiInterface {
+	case "gui":
+
+		var cmd *exec.Cmd
+        var err error
         
-    if *gui == 1 {
-        msg := make(chan string)
-        w := writer{msg: msg}
-        go gtkui.Show(msg)
-        s.Stdout = w
-        s.Stderr = w
-        s.Run()
-    } else {
-        s.Stdout = os.Stdout
-        s.Stderr = os.Stderr
-        s.Run()
-    }
+		finished := make(chan bool)
+
+		gui := gtkui.NewGui()
+
+		go func() {
+			gui.Show(finished)
+		}()
+
+		go func() {
+			cmd, err = server.Run(args, gui, gui)
+		}()
+        
+		<-finished
+        if(err == nil) {
+		    cmd.Process.Kill()
+        }
+
+	default:
+		server.Run(args, os.Stdout, os.Stdin)
+	}
     
-    // c := 2;
-    // 
-    // if c > 5 {
-    //     cli.Start()
-    // } else {       
-    //     gui.Start()
-    // }
+    return
 }

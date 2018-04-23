@@ -1,19 +1,47 @@
 package gtkui
 
 import (
+	"fmt"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
-    "os"
-    "fmt"
 )
 
-func Show(msgChan chan string) {
-    
+type Gui struct {
+	Builder *gtk.Builder
+	Tv      *gtk.TextView
+	Window  *gtk.Window
+}
+
+func (g *Gui) Write(b []byte) (n int, err error) {
+	s := string(b[0:])
+	buffer, err := g.Tv.GetBuffer()
+	buffer.InsertAtCursor(s)
+	return len(b), err
+}
+
+func (g *Gui) Show(finished chan bool) {
+
+	g.Window.Connect("destroy", func() {
+		fmt.Println("Bye Bye")
+		finished <- true
+	})
+	g.Window.SetTitle("EzPHP")
+	g.Window.SetDefaultSize(800, 600)
+	g.Window.ShowAll()
+
+	gtk.Main()
+}
+
+func NewGui() *Gui {
+
 	gtk.Init(nil)
 
 	builder, err := gtk.BuilderNewFromFile("gui.glade")
+	if err != nil {
+		log.Fatal("Unable to load gui.glade:", err)
+	}
 
-	obj, err := builder.GetObject("mainWindow")
+	winObj, err := builder.GetObject("mainWindow")
 	if err != nil {
 		log.Fatal("Unable to find window:", err)
 	}
@@ -24,37 +52,12 @@ func Show(msgChan chan string) {
 	}
 
 	tv := tvObj.(*gtk.TextView)
-    
-	buffer, err := tv.GetBuffer()
-	if err != nil {
-		log.Fatal("Unable to get buffer:", err)
+	win := winObj.(*gtk.Window)
+
+	return &Gui{
+		Builder: builder,
+		Tv:      tv,
+		Window:  win,
 	}
 
-	buffer.SetText("[EzPhp] Launching to EzPHP\n")
-	buffer.InsertAtCursor("[About] https://github.com/marcomilon/ezphp\n")
-    
-	if win, okwin := obj.(*gtk.Window); okwin {
-
-		win.Connect("destroy", func() {
-            fmt.Println("Bye Bye")
-			gtk.MainQuit()
-            os.Exit(0)
-		})
-		win.SetTitle("EzPHP")
-		win.SetDefaultSize(800, 600)
-		win.ShowAll()
-        
-        go func() {
-			for {
-				s := <- msgChan
-				buffer.InsertAtCursor(s)
-			}
-		}()
-             
-	} else {
-        
-		log.Fatal("Unable to create window:", err)
-	}
-
-	gtk.Main()
 }

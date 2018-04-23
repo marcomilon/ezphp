@@ -1,34 +1,28 @@
 package server
 
 import (
-    "fmt"
-    "os/exec"
-    "io"
+	"fmt"
+	"io"
+	"os/exec"
 )
 
-type Serve struct {
-    Path string
-    Host string
-    Port string
-    DocumentRoot string
-    Stdout io.Writer
-    Stderr io.Writer
-    cmd *exec.Cmd
+type Args struct {
+	Php    string
+	Host   string
+	Public string
 }
 
-func (s Serve) Run()  {    
-    s.cmd = exec.Command(s.Path, "-S", s.Host + ":" + s.Port, "-t", s.DocumentRoot)
-    s.cmd.Stdout = s.Stdout
-    s.cmd.Stderr = s.Stderr
-    execErr := s.cmd.Run()
-    if execErr != nil {
-        fmt.Println("[Error] Unable to execute PHP: %s", execErr.Error())
-        fmt.Println("[Error] php is located in: %s", s.Path)
-        fmt.Println("[Error] php require to have the Visual C++ Redistributable for Visual Studio 2017")
-        fmt.Println("[Error] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
-    }
-}
-
-func (s Serve) Stop()  { 
-    s.cmd.Process.Kill()
+func Run(args Args, stdout io.Writer, stderr io.Writer) (*exec.Cmd, error) {
+	fmt.Println("[Info] " + args.Php + " -S " + args.Host + " -t " + args.Public)
+	cmd := exec.Command(args.Php, "-S", args.Host, "-t", args.Public)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	err := cmd.Start()
+	if err != nil {
+		fmt.Fprintln(stdout, "[Error] Unable to execute PHP: " + err.Error())
+		fmt.Fprintln(stdout, "[Info] php require to have the Visual C++ Redistributable for Visual Studio 2017")
+		fmt.Fprintln(stdout, "[Info] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
+        return nil, err
+	}
+	return cmd, nil
 }
