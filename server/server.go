@@ -13,7 +13,7 @@ type Args struct {
 }
 
 func Run(args Args) {
-	fmt.Println("[Info] " + args.Php + " -S " + args.Host + " -t " + args.Public)
+	fmt.Println("[Info] Running php server: " + args.Php + " -S " + args.Host + " -t " + args.Public)
 	cmd := exec.Command(args.Php, "-S", args.Host, "-t", args.Public)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -22,5 +22,7 @@ func Run(args Args) {
 		fmt.Println("[Error] Unable to execute PHP: " + err.Error())
 		fmt.Println("[Info] php require to have the Visual C++ Redistributable for Visual Studio 2017")
 		fmt.Println("[Info] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
+        fmt.Print("[Info] Press Enter to exit...")
+        fmt.Scanln()
 	}
 }
