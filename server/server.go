@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"io"
 	"os/exec"
+    "os"
 )
 
 type Args struct {
@@ -12,17 +12,15 @@ type Args struct {
 	Public string
 }
 
-func Run(args Args, stdout io.Writer, stderr io.Writer) (*exec.Cmd, error) {
+func Run(args Args) {
 	fmt.Println("[Info] " + args.Php + " -S " + args.Host + " -t " + args.Public)
 	cmd := exec.Command(args.Php, "-S", args.Host, "-t", args.Public)
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
-	err := cmd.Start()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
 	if err != nil {
-		fmt.Fprintln(stdout, "[Error] Unable to execute PHP: " + err.Error())
-		fmt.Fprintln(stdout, "[Info] php require to have the Visual C++ Redistributable for Visual Studio 2017")
-		fmt.Fprintln(stdout, "[Info] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
-        return nil, err
+		fmt.Println("[Error] Unable to execute PHP: " + err.Error())
+		fmt.Println("[Info] php require to have the Visual C++ Redistributable for Visual Studio 2017")
+		fmt.Println("[Info] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
 	}
-	return cmd, nil
 }
