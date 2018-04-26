@@ -12,9 +12,9 @@ import (
 
 const (
 	phpExecutable  = "php.exe"
-	phpDir         = "php"
-	phpDownloadUrl = "https://windows.php.net/downloads/releases/php-7.2.4-nts-Win32-VC15-x64.zip"
-	phpZipFile     = "php/php-7.2.3-nts-Win32-VC15-x64.zip"
+	PhpDir         = "php"
+	phpDownloadUrl = "https://windows.php.net/downloads/releases/archives/php-7.0.0-Win32-VC14-x64.zip"
+	phpZipFile     = "php/php-7.0.0-Win32-VC14-x64.zip"
 )
 
 var (
@@ -27,7 +27,7 @@ func Install() (string, error) {
 
 	fmt.Println("[Installer] Installing PHP. Please wait...")
 
-	err = createDirIfNotExist(phpDir)
+	err = createDirIfNotExist(PhpDir)
 	if err != nil {
 		return "", err
 	}
@@ -37,17 +37,17 @@ func Install() (string, error) {
 		return "", err
 	}
 
-	err = unzip(phpZipFile, phpDir)
+	err = unzip(phpZipFile, PhpDir)
 	if err != nil {
 		return "", err
 	}
 
-	absPath, err = filepath.Abs(filepath.Dir(phpDir))
+	absPath, err = filepath.Abs(filepath.Dir(PhpDir))
 	if err != nil {
 		return "", err
 	}
 
-	path := absPath + string(os.PathSeparator) + phpDir + string(os.PathSeparator) + phpExecutable
+	path := absPath + string(os.PathSeparator) + PhpDir + string(os.PathSeparator) + phpExecutable
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		if err != nil {

@@ -6,46 +6,45 @@ import (
 	"fmt"
 	"github.com/marcomilon/ezphp/installer"
 	"github.com/marcomilon/ezphp/server"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+    "path/filepath"
 )
 
 const windows = "linux"
+const localPhpInstallDir = installer.PhpDir
 
 func main() {
 
-	var phpExecPath string
+	var defaultExecPath string
 	var err error
 
 	if runtime.GOOS == windows {
-		phpExecPath = "php.exe"
+		defaultExecPath = "php.exe"
 	} else {
-		phpExecPath = "/usr/bin/php232"
+		defaultExecPath = "php"
 	}
 
-	php := flag.String("php", phpExecPath, "Path to php executable")
+	php := flag.String("php", "", "Path to php executable")
 	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
 	public := flag.String("public", "web", "Path to public directory")
 
 	flag.Parse()
 
-	phpExecPath, err = exec.LookPath(phpExecPath)
-	if err != nil {
-		fmt.Printf("[Error] php executable %s not found in path\n", phpExecPath)
-		if runtime.GOOS == windows {
-			phpExecPath, err = askToInstallPhp()
-			if err != nil {
-				fmt.Println("[Info] php won't be installed. bye bye")
-				return
-			}
+	if *php == "" {
 
-            phpExecPath, err = installer.Install()
-            if err != nil {
-                fmt.Println("[Error] " + err.Error())
-                return
-            }
+		defaultExecPath, err = searchForPhp(defaultExecPath, err)
+		if err != nil {
+			fmt.Println(err.Error())
+            fmt.Print("[Info] Press Enter to exit...")
+            fmt.Scanln()
+            fmt.Scanln()
+			return
 		}
+        
+        php = &defaultExecPath
 	}
 
 	args := server.Args{
@@ -57,6 +56,37 @@ func main() {
 	server.Run(args)
 
 	return
+}
+
+func searchForPhp(defaultExecPath string, err error) (string, error) {
+    if runtime.GOOS == windows {
+    	if _, err := os.Stat(localPhpInstallDir + string(os.PathSeparator) + defaultExecPath); err == nil {
+    		fmt.Println("[Info] Local php installation founded")
+            absPath, _ := filepath.Abs(filepath.Dir(localPhpInstallDir))
+    		defaultExecPath =  absPath + string(os.PathSeparator) + localPhpInstallDir + string(os.PathSeparator) + defaultExecPath
+    		return defaultExecPath, nil
+    	}
+    }
+
+	defaultExecPath, err = exec.LookPath(defaultExecPath)
+	if err != nil {
+		fmt.Println("[Error] php executable not found in path")
+		if runtime.GOOS == windows {
+			defaultExecPath, err = askToInstallPhp()
+			if err != nil {
+				return "", errors.New("[Info] php won't be installed. bye bye.")
+			}
+
+			defaultExecPath, err = installer.Install()
+			if err != nil {
+				return "", errors.New("[Error] " + err.Error())
+			}
+		} else {
+            return "", errors.New("[Error] Auto installer is available only for Windows\n[Info] Please install php using your favorite package manager")
+        }
+	}
+
+	return defaultExecPath, nil
 }
 
 func askToInstallPhp() (string, error) {
