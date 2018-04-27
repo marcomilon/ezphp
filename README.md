@@ -1,6 +1,8 @@
 ### EzPHP
 
-EzPHP is the easiest way to setup a PHP development environment for learning for Windows
+EzPHP is the easiest way to setup a PHP development environment for learning for Windows.
+
+![Ezphp](https://raw.githubusercontent.com/marcomilon/ezphp/master/ezphp.gif)
 
 ### Installation
 
