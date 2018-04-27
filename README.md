@@ -6,7 +6,7 @@ EzPHP is the easiest way to setup a PHP development environment for learning for
 
 ### Installation
 
-Download [ezphp.zip](https://github.com/marcomilon/ezPHP/releases/download/0.0.1/ezphp.zip) to your desktop.
+Download [ezphp.zip](https://github.com/marcomilon/ezphp/releases/download/1.0.0/ezphp.zip) to your desktop.
 
 ### How it works?
 
