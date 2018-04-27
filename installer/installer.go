@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	phpExecutable  = "php.exe"
-	PhpDir         = "php"
+	PhpExecutable  = "php.exe"
+	PhpDir         = "php-7.0.0"
 	phpDownloadUrl = "https://windows.php.net/downloads/releases/archives/php-7.0.0-Win32-VC14-x64.zip"
-	phpZipFile     = "php/php-7.0.0-Win32-VC14-x64.zip"
+	phpZipFile     = "php-7.0.0-Win32-VC14-x64.zip"
 )
 
 var (
@@ -27,7 +27,7 @@ func Install() (string, error) {
 
 	fmt.Println("[Installer] Installing PHP. Please wait...")
 
-	err = createDirIfNotExist(PhpDir)
+	err = CreateDirIfNotExist(PhpDir)
 	if err != nil {
 		return "", err
 	}
@@ -47,7 +47,7 @@ func Install() (string, error) {
 		return "", err
 	}
 
-	path := absPath + string(os.PathSeparator) + PhpDir + string(os.PathSeparator) + phpExecutable
+	path := absPath + string(os.PathSeparator) + PhpDir + string(os.PathSeparator) + PhpExecutable
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		if err != nil {
@@ -58,7 +58,7 @@ func Install() (string, error) {
 	return path, nil
 }
 
-func createDirIfNotExist(dir string) error {
+func CreateDirIfNotExist(dir string) error {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.MkdirAll(dir, 0755)
 		if err != nil {

@@ -8,28 +8,22 @@ import (
 	"github.com/marcomilon/ezphp/server"
 	"os"
 	"os/exec"
-	"runtime"
+	"path/filepath"
 	"strings"
-    "path/filepath"
 )
 
-const windows = "linux"
 const localPhpInstallDir = installer.PhpDir
 
 func main() {
 
-	var defaultExecPath string
+	var defaultExecPath = installer.PhpExecutable
 	var err error
 
-	if runtime.GOOS == windows {
-		defaultExecPath = "php.exe"
-	} else {
-		defaultExecPath = "php"
-	}
+	banner()
 
 	php := flag.String("php", "", "Path to php executable")
 	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
-	public := flag.String("public", "web", "Path to public directory")
+	public := flag.String("public", "public", "Path to public directory")
 
 	flag.Parse()
 
@@ -38,14 +32,17 @@ func main() {
 		defaultExecPath, err = searchForPhp(defaultExecPath, err)
 		if err != nil {
 			fmt.Println(err.Error())
-            fmt.Print("[Info] Press Enter to exit...")
-            fmt.Scanln()
-            fmt.Scanln()
+			fmt.Print("[Info] Press Enter to exit...")
+			fmt.Scanln()
+			fmt.Scanln()
 			return
 		}
-        
-        php = &defaultExecPath
+
+		php = &defaultExecPath
 	}
+
+	fmt.Println("[Info] Copy your php documents on " + *public + " directory")
+	installer.CreateDirIfNotExist(*public)
 
 	args := server.Args{
 		Php:    *php,
@@ -59,31 +56,27 @@ func main() {
 }
 
 func searchForPhp(defaultExecPath string, err error) (string, error) {
-    if runtime.GOOS == windows {
-    	if _, err := os.Stat(localPhpInstallDir + string(os.PathSeparator) + defaultExecPath); err == nil {
-    		fmt.Println("[Info] Local php installation founded")
-            absPath, _ := filepath.Abs(filepath.Dir(localPhpInstallDir))
-    		defaultExecPath =  absPath + string(os.PathSeparator) + localPhpInstallDir + string(os.PathSeparator) + defaultExecPath
-    		return defaultExecPath, nil
-    	}
-    }
+
+	if _, err := os.Stat(localPhpInstallDir + string(os.PathSeparator) + defaultExecPath); err == nil {
+		fmt.Println("[Info] Local php installation founded")
+		absPath, _ := filepath.Abs(filepath.Dir(localPhpInstallDir))
+		defaultExecPath = absPath + string(os.PathSeparator) + localPhpInstallDir + string(os.PathSeparator) + defaultExecPath
+		return defaultExecPath, nil
+	}
 
 	defaultExecPath, err = exec.LookPath(defaultExecPath)
 	if err != nil {
 		fmt.Println("[Error] php executable not found in path")
-		if runtime.GOOS == windows {
-			defaultExecPath, err = askToInstallPhp()
-			if err != nil {
-				return "", errors.New("[Info] php won't be installed. bye bye.")
-			}
 
-			defaultExecPath, err = installer.Install()
-			if err != nil {
-				return "", errors.New("[Error] " + err.Error())
-			}
-		} else {
-            return "", errors.New("[Error] Auto installer is available only for Windows\n[Info] Please install php using your favorite package manager")
-        }
+		defaultExecPath, err = askToInstallPhp()
+		if err != nil {
+			return "", errors.New("[Info] php won't be installed. bye bye.")
+		}
+
+		defaultExecPath, err = installer.Install()
+		if err != nil {
+			return "", errors.New("[Error] " + err.Error())
+		}
 	}
 
 	return defaultExecPath, nil
@@ -103,4 +96,16 @@ func askToInstallPhp() (string, error) {
 	}
 
 	return "", errors.New("Unable to cofirm php installation.")
+}
+
+func banner() {
+	fmt.Println("")
+	fmt.Println("[Author] marco.milon@gmail.com")
+	fmt.Println(" ______     _____  _    _ _____  ")
+	fmt.Println("|  ____|   |  __ \\| |  | |  __ \\ ")
+	fmt.Println("| |__   ___| |__) | |__| | |__) |")
+	fmt.Println("|  __| |_  /  ___/|  __  |  ___/ ")
+	fmt.Println("| |____ / /| |    | |  | | |     ")
+	fmt.Println("|______/___|_|    |_|  |_|_|     ")
+	fmt.Println("")
 }
