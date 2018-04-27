@@ -1,6 +1,6 @@
 ### EzPHP
 
-EzPHP is the easiest way to setup a PHP development environment for learning for Windows.
+EzPHP is an alternative to Xamp/Wamp. EzPHP is the easiest way to setup a PHP development environment for learning on Windows.
 
 ![EzPHP](https://raw.githubusercontent.com/marcomilon/ezPHP/master/ezphp.gif)
 
@@ -15,7 +15,7 @@ To start programming with PHP just copy your PHP files to the **public** directo
 
 ### Why i create EzPHP?
 
-XAMP or equivalent environment are difficult to set up for people who are learning to code.
+XAMP or equivalent environment are difficult to set up for people who are learning to code. With EzPHP you have a development environment with just one click.
 EzPHP is available only for windows.
 
 ### Requirements
