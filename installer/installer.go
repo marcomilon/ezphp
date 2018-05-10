@@ -32,12 +32,12 @@ func Install() (string, error) {
 		return "", err
 	}
 
-	err = downloadFile(phpZipFile, phpDownloadUrl)
+	err = downloadFile(PhpDir + string(os.PathSeparator) + phpZipFile, phpDownloadUrl)
 	if err != nil {
 		return "", err
 	}
 
-	err = unzip(phpZipFile, PhpDir)
+	err = unzip(PhpDir + string(os.PathSeparator) + phpZipFile, PhpDir)
 	if err != nil {
 		return "", err
 	}
