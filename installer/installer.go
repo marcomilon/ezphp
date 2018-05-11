@@ -3,11 +3,11 @@ package installer
 import (
 	"archive/zip"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"github.com/marcomilon/ezphp/internals/output"
 )
 
 const (
@@ -25,7 +25,7 @@ var (
 
 func Install() (string, error) {
 
-	fmt.Println("[Installer] Installing PHP. Please wait...")
+	output.Installer("Installing PHP. Please wait...\n")
 
 	err = CreateDirIfNotExist(PhpDir)
 	if err != nil {

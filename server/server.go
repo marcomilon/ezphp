@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"github.com/marcomilon/ezphp/internals/output"
 )
 
 type Args struct {
@@ -14,19 +15,17 @@ type Args struct {
 
 func Run(args Args) {
 
-	fmt.Println("[Info] Running php server: " + args.Php + " -S " + args.Host + " -t " + args.Public)
-	fmt.Println("[Info] Your server url is: " + "http://" + args.Host)
-	fmt.Println("")
-
+	output.Info("Command to launch php server: " + args.Php + " -S " + args.Host + " -t " + args.Public + "\n")
+	output.Info("Your server url is: " + "http://" + args.Host + "\n")
 	cmd := exec.Command(args.Php, "-S", args.Host, "-t", args.Public)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println("[Error] Unable to execute PHP: " + err.Error())
-		fmt.Println("[Info] php require to have the Visual C++ Redistributable for Visual Studio 2017")
-		fmt.Println("[Info] Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145")
-		fmt.Print("[Info] Press Enter to exit...")
+		output.Error("Unable to execute PHP: " + err.Error() + "\n")
+		output.Info("php require to have the Visual C++ Redistributable for Visual Studio 2017\n")
+		output.Info("Download Visual C++ from here: https://www.microsoft.com/en-us/download/details.aspx?id=48145\n")
+		output.Info("Press Enter to exit... ")
 		fmt.Scanln()
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/marcomilon/ezphp/installer"
 	"github.com/marcomilon/ezphp/server"
+	"github.com/marcomilon/ezphp/internals/output"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -31,8 +32,8 @@ func main() {
 
 		defaultExecPath, err = searchForPhp(defaultExecPath, err)
 		if err != nil {
-			fmt.Println(err.Error())
-			fmt.Print("[Info] Press Enter to exit...")
+			output.Error(err.Error())
+			output.Info("Press Enter to exit... ")
 			fmt.Scanln()
 			fmt.Scanln()
 			return
@@ -41,7 +42,7 @@ func main() {
 		php = &defaultExecPath
 	}
 
-	fmt.Println("[Info] Copy your php documents on " + *public + " directory")
+	output.Info("Your document root is " + *public + " directory\n")
 	installer.CreateDirIfNotExist(*public)
 
 	args := server.Args{
@@ -58,7 +59,7 @@ func main() {
 func searchForPhp(defaultExecPath string, err error) (string, error) {
 
 	if _, err := os.Stat(localPhpInstallDir + string(os.PathSeparator) + defaultExecPath); err == nil {
-		fmt.Println("[Info] Local php installation founded")
+		output.Info("Local php installation founded\n")
 		absPath, _ := filepath.Abs(filepath.Dir(localPhpInstallDir))
 		defaultExecPath = absPath + string(os.PathSeparator) + localPhpInstallDir + string(os.PathSeparator) + defaultExecPath
 		return defaultExecPath, nil
@@ -66,16 +67,16 @@ func searchForPhp(defaultExecPath string, err error) (string, error) {
 
 	defaultExecPath, err = exec.LookPath(defaultExecPath)
 	if err != nil {
-		fmt.Println("[Error] php executable not found in path")
+		output.Error("php executable not found in path\n")
 
 		defaultExecPath, err = askToInstallPhp()
 		if err != nil {
-			return "", errors.New("[Info] php won't be installed. bye bye.")
+			return "", errors.New("php won't be installed. bye bye.\n")
 		}
 
 		defaultExecPath, err = installer.Install()
 		if err != nil {
-			return "", errors.New("[Error] " + err.Error())
+			return "", errors.New(err.Error())
 		}
 	}
 
@@ -85,7 +86,7 @@ func searchForPhp(defaultExecPath string, err error) (string, error) {
 func askToInstallPhp() (string, error) {
 	var confirmation string
 
-	fmt.Print("[Installer] Would you like to install php locally [y/N]? ")
+	output.Installer("Would you like to install php locally [y/N]? ")
 	fmt.Scan(&confirmation)
 
 	confirmation = strings.TrimSpace(confirmation)
@@ -99,13 +100,12 @@ func askToInstallPhp() (string, error) {
 }
 
 func banner() {
-	fmt.Println("")
-	fmt.Println("[Author] marco.milon@gmail.com")
 	fmt.Println(" ______     _____  _    _ _____  ")
 	fmt.Println("|  ____|   |  __ \\| |  | |  __ \\ ")
 	fmt.Println("| |__   ___| |__) | |__| | |__) |")
 	fmt.Println("|  __| |_  /  ___/|  __  |  ___/ ")
 	fmt.Println("| |____ / /| |    | |  | | |     ")
 	fmt.Println("|______/___|_|    |_|  |_|_|     ")
+	fmt.Println("Author", "marco.milon@gmail.com")
 	fmt.Println("")
 }
