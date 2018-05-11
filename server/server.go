@@ -15,7 +15,7 @@ type Args struct {
 
 func Run(args Args) {
 
-	output.Info("Command to launch php server: " + args.Php + " -S " + args.Host + " -t " + args.Public + "\n")
+	output.Info("Command: " + args.Php + " -S " + args.Host + " -t " + args.Public + "\n")
 	output.Info("Your server url is: " + "http://" + args.Host + "\n")
 	cmd := exec.Command(args.Php, "-S", args.Host, "-t", args.Public)
 	cmd.Stdout = os.Stdout
