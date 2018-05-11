@@ -42,7 +42,7 @@ func main() {
 		php = &defaultExecPath
 	}
 
-	output.Info("Your document root is " + *public + " directory\n")
+	output.Info("Your document root directory is: " + *public + "\n")
 	installer.CreateDirIfNotExist(*public)
 
 	args := server.Args{
