@@ -10,6 +10,7 @@ BINARY_WIN=$(BINARY_NAME).exe
 PHPDIR=php-7.0.0
 RELEASEDIR=release
 RELEASEFILE=ezphp.zip
+PUBLICDIR=public
 
 all: build-linux
 
@@ -19,6 +20,7 @@ clean:
 	rm -rf $(PHPDIR)
 	rm -rf $(RELEASEDIR)
 	rm -rf $(BUILDDIR)
+	rm -rf $(PUBLICDIR)
 	
 build-linux: clean
 	$(GOBUILD) -o $(BINARY_UNIX)
