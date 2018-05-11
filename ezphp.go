@@ -32,7 +32,7 @@ func main() {
 
 		defaultExecPath, err = searchForPhp(defaultExecPath, err)
 		if err != nil {
-			output.Error(err.Error())
+			output.Error(err.Error() + "\n")
 			output.Info("Press Enter to exit... ")
 			fmt.Scanln()
 			fmt.Scanln()
@@ -71,7 +71,7 @@ func searchForPhp(defaultExecPath string, err error) (string, error) {
 
 		defaultExecPath, err = askToInstallPhp()
 		if err != nil {
-			return "", errors.New("php won't be installed. bye bye.\n")
+			return "", errors.New("php won't be installed. bye bye.")
 		}
 
 		defaultExecPath, err = installer.Install()
