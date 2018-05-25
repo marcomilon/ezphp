@@ -3,6 +3,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
+GORUN=$(GOCMD) run
 BUILDDIR=ezphp
 BINARY_NAME=ezphp
 BINARY_UNIX=$(BINARY_NAME)-linux
@@ -13,6 +14,9 @@ RELEASEFILE=ezphp.zip
 PUBLICDIR=public
 
 all: build-linux
+	
+run:
+	$(GORUN) $(BINARY_NAME).go
 
 clean:
 	$(GOCLEAN)

@@ -4,20 +4,23 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/marcomilon/ezphp/installer"
-	"github.com/marcomilon/ezphp/server"
-	"github.com/marcomilon/ezphp/internals/output"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/marcomilon/ezphp/internals/install"
+	"github.com/marcomilon/ezphp/internals/output"
+	"github.com/marcomilon/ezphp/internals/serve"
 )
 
-const localPhpInstallDir = installer.PhpDir
+const (
+	phpExe = "php.exe"
+)
 
 func main() {
 
-	var defaultExecPath = installer.PhpExecutable
+	var defaultExecPath string
 	var err error
 
 	banner()
@@ -30,7 +33,7 @@ func main() {
 
 	if *php == "" {
 
-		defaultExecPath, err = searchForPhp(defaultExecPath, err)
+		defaultExecPath, err = searchForPhp(phpExe)
 		if err != nil {
 			output.Error(err.Error() + "\n")
 			output.Info("Press Enter to exit... ")
@@ -43,47 +46,53 @@ func main() {
 	}
 
 	output.Info("Your document root directory is: " + *public + "\n")
-	installer.CreateDirIfNotExist(*public)
-
-	args := server.Args{
-		Php:    *php,
-		Host:   *host,
-		Public: *public,
+	install.CreateDirIfNotExist(*public)
+	
+	err = serve.Start(*php, *host, *public)
+	if err != nil {
+		output.Error("Unable to execute PHP: " + err.Error() + "\n")
+		output.Error("Press Enter to continue... ")
+		fmt.Scanln()
 	}
-
-	server.Run(args)
 
 	return
 }
 
-func searchForPhp(defaultExecPath string, err error) (string, error) {
+func searchForPhp(phpExe string) (string, error) {
 
-	if _, err := os.Stat(localPhpInstallDir + string(os.PathSeparator) + defaultExecPath); err == nil {
+	var defaultExecPath string
+	var path string
+	var err error
+	var absPath string
+
+	output.Info("Looking for php in default directory: " + install.PhpDir + "\n")
+	if _, err = os.Stat(install.PhpDir); err == nil {
 		output.Info("Local php installation founded\n")
-		absPath, _ := filepath.Abs(filepath.Dir(localPhpInstallDir))
-		defaultExecPath = absPath + string(os.PathSeparator) + localPhpInstallDir + string(os.PathSeparator) + defaultExecPath
+		absPath, _ = filepath.Abs(filepath.Dir(install.PhpDir))
+		defaultExecPath = absPath + string(os.PathSeparator) + install.PhpDir + string(os.PathSeparator) + phpExe
 		return defaultExecPath, nil
 	}
 
-	defaultExecPath, err = exec.LookPath(defaultExecPath)
+	defaultExecPath, err = exec.LookPath(phpExe)
 	if err != nil {
 		output.Error("php executable not found in path\n")
 
-		defaultExecPath, err = askToInstallPhp()
-		if err != nil {
+		if !askToInstallPhp() {
 			return "", errors.New("php won't be installed. bye bye.")
 		}
 
-		defaultExecPath, err = installer.Install()
+		path, err = install.Installer(install.Version, install.PhpDir)
 		if err != nil {
 			return "", errors.New(err.Error())
 		}
+
+		defaultExecPath = path + string(os.PathSeparator) + phpExe
 	}
 
 	return defaultExecPath, nil
 }
 
-func askToInstallPhp() (string, error) {
+func askToInstallPhp() bool {
 	var confirmation string
 
 	output.Installer("Would you like to install php locally [y/N]? ")
@@ -93,10 +102,10 @@ func askToInstallPhp() (string, error) {
 	confirmation = strings.ToLower(confirmation)
 
 	if confirmation == "y" || confirmation == "yes" {
-		return "path", nil
+		return true
 	}
 
-	return "", errors.New("Unable to cofirm php installation.")
+	return false
 }
 
 func banner() {

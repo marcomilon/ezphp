@@ -1,4 +1,4 @@
-package installer
+package install
 
 import (
 	"archive/zip"
@@ -7,47 +7,42 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"github.com/marcomilon/ezphp/internals/output"
 )
 
 const (
-	PhpExecutable  = "php.exe"
-	PhpDir         = "php-7.0.0"
-	phpDownloadUrl = "https://windows.php.net/downloads/releases/archives/php-7.0.0-Win32-VC14-x64.zip"
-	phpZipFile     = "php-7.0.0-Win32-VC14-x64.zip"
+	downloadUrl = "https://windows.php.net/downloads/releases/archives/"
+	PhpDir      = "php-7.0.0"
+	Version     = "php-7.0.0-Win32-VC14-x64.zip"
 )
 
 var (
 	absPath string
-	path    string
 	err     error
 )
 
-func Install() (string, error) {
+func Installer(version string, destination string) (string, error) {
 
-	output.Installer("Installing PHP. Please wait...\n")
-
-	err = CreateDirIfNotExist(PhpDir)
+	err = CreateDirIfNotExist(destination)
 	if err != nil {
 		return "", err
 	}
 
-	err = downloadFile(PhpDir + string(os.PathSeparator) + phpZipFile, phpDownloadUrl)
+	err = download(downloadUrl+version, destination+string(os.PathSeparator)+version)
 	if err != nil {
 		return "", err
 	}
 
-	err = unzip(PhpDir + string(os.PathSeparator) + phpZipFile, PhpDir)
+	err = unzip(destination+string(os.PathSeparator)+version, destination)
 	if err != nil {
 		return "", err
 	}
 
-	absPath, err = filepath.Abs(filepath.Dir(PhpDir))
+	absPath, err = filepath.Abs(filepath.Dir(destination))
 	if err != nil {
 		return "", err
 	}
 
-	path := absPath + string(os.PathSeparator) + PhpDir + string(os.PathSeparator) + PhpExecutable
+	path := absPath + string(os.PathSeparator) + destination + string(os.PathSeparator)
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		if err != nil {
@@ -58,20 +53,9 @@ func Install() (string, error) {
 	return path, nil
 }
 
-func CreateDirIfNotExist(dir string) error {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err = os.MkdirAll(dir, 0755)
-		if err != nil {
-			return err
-		}
-	}
+func download(url string, dest string) error {
 
-	return nil
-}
-
-func downloadFile(filepath string, url string) error {
-
-	if _, err := os.Stat(filepath); err == nil {
+	if _, err := os.Stat(dest); err == nil {
 		return nil
 	}
 
@@ -87,7 +71,7 @@ func downloadFile(filepath string, url string) error {
 	}
 
 	// Create the file
-	out, err := os.Create(filepath)
+	out, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
@@ -102,11 +86,14 @@ func downloadFile(filepath string, url string) error {
 	return nil
 }
 
-func unzip(src, dest string) error {
+func unzip(src string, dest string) error {
+
 	r, err := zip.OpenReader(src)
+
 	if err != nil {
 		return err
 	}
+
 	defer func() {
 		if err := r.Close(); err != nil {
 			panic(err)
@@ -117,10 +104,13 @@ func unzip(src, dest string) error {
 
 	// Closure to address file descriptors issue with all the deferred .Close() methods
 	extractAndWriteFile := func(f *zip.File) error {
+
 		rc, err := f.Open()
+
 		if err != nil {
 			return err
 		}
+
 		defer func() {
 			if err := rc.Close(); err != nil {
 				panic(err)
@@ -134,9 +124,11 @@ func unzip(src, dest string) error {
 		} else {
 			os.MkdirAll(filepath.Dir(path), f.Mode())
 			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+
 			if err != nil {
 				return err
 			}
+
 			defer func() {
 				if err := f.Close(); err != nil {
 					panic(err)
@@ -144,15 +136,28 @@ func unzip(src, dest string) error {
 			}()
 
 			_, err = io.Copy(f, rc)
+
 			if err != nil {
 				return err
 			}
 		}
+
 		return nil
 	}
 
 	for _, f := range r.File {
 		err := extractAndWriteFile(f)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func CreateDirIfNotExist(dir string) error {
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err = os.MkdirAll(dir, 0755)
 		if err != nil {
 			return err
 		}
