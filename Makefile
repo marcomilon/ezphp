@@ -20,11 +20,7 @@ run:
 
 clean:
 	$(GOCLEAN)
-	rm -f $(BINARY_UNIX)
-	rm -rf $(PHPDIR)
-	rm -rf $(RELEASEDIR)
-	rm -rf $(BUILDDIR)
-	rm -rf $(PUBLICDIR)
+	rm -rf $(BINARY_UNIX) $(PHPDIR) $(RELEASEDIR) $(BUILDDIR) $(PUBLICDIR)
 	
 build-linux: clean
 	$(GOBUILD) -o $(BINARY_UNIX)
