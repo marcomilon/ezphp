@@ -47,7 +47,7 @@ func main() {
 
 	output.Info("Your document root directory is: " + *public + "\n")
 	install.CreateDirIfNotExist(*public)
-	
+
 	err = serve.Start(*php, *host, *public)
 	if err != nil {
 		output.Error("Unable to execute PHP: " + err.Error() + "\n")

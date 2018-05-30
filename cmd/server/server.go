@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/marcomilon/ezphp/internals/output"
 	"github.com/marcomilon/ezphp/internals/serve"
@@ -14,7 +15,7 @@ func main() {
 	public := flag.String("public", "", "Path to public directory")
 
 	flag.Parse()
-	
+
 	if *php == "" || *host == "" || *public == "" {
 		flag.PrintDefaults()
 		os.Exit(1)

@@ -1,9 +1,7 @@
-php*
-web
-bin
-*.exe
-*.zip
-*~
 ezphp
-ezphp-linux
-release
+installer
+server
+ezphp.exe
+installer.exe
+server.exe
+dist

@@ -1,35 +1,52 @@
 GOCMD=go
+GOIMPORT=goimports
+GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
+
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GORUN=$(GOCMD) run
-BUILDDIR=ezphp
-BINARY_NAME=ezphp
-BINARY_UNIX=$(BINARY_NAME)-linux
-BINARY_WIN=$(BINARY_NAME).exe
-PHPDIR=php-7.0.0
-RELEASEDIR=release
-RELEASEFILE=ezphp.zip
-PUBLICDIR=public
 
-all: build-linux
+APP_NAME=ezphp
+CMD_INSTALLER_NAME=installer
+CMD_SERVER_NAME=server
+
+CMD_INSTALLER_DIR=cmd/installer/
+CMD_SERVER_DIR=cmd/server/
+
+BUILDDIR=dist
+BINARY_WIN=.exe
+
+RELEASEDIR=$(BUILDDIR)/$(APP_NAME)
+RELEASEFILE=$(APP_NAME).zip
+
+all: release
+	
+setup:
+	mkdir -p $(RELEASEDIR)
 	
 run:
-	$(GORUN) $(BINARY_NAME).go
+	$(GORUN) $(APP_NAME).go
 
 clean:
 	$(GOCLEAN)
-	rm -rf $(BINARY_UNIX) $(PHPDIR) $(RELEASEDIR) $(BUILDDIR) $(PUBLICDIR)
+	rm -rf $(APP_NAME) $(CMD_INSTALLER_NAME) $(CMD_SERVER_NAME) $(BUILDDIR)
+
+format:
+	goimports -w -d $(GOFILES)
 	
 build-linux: clean
-	$(GOBUILD) -o $(BINARY_UNIX)
+	$(GOBUILD) -o $(CMD_INSTALLER_DIR)$(CMD_INSTALLER_NAME).go -o $(RELEASEDIR)/$(CMD_INSTALLER_NAME)
+	$(GOBUILD) -o $(CMD_SERVER_DIR)$(CMD_SERVER_NAME).go -o $(RELEASEDIR)/$(CMD_SERVER_NAME)
+	$(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(APP_NAME)
 	
-build-win: clean
-	GOOS=windows GOARCH=386 $(GOBUILD) -o $(BUILDDIR)/$(BINARY_WIN)
+build-win: clean setup
+	GOOS=windows GOARCH=386 $(GOBUILD) -o $(CMD_INSTALLER_DIR)$(CMD_INSTALLER_NAME).go -o $(RELEASEDIR)/$(CMD_INSTALLER_NAME)$(BINARY_WIN)
+	GOOS=windows GOARCH=386 $(GOBUILD) -o $(CMD_SERVER_DIR)$(CMD_SERVER_NAME).go -o $(RELEASEDIR)/$(CMD_SERVER_NAME)$(BINARY_WIN)
+	GOOS=windows GOARCH=386 $(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(APP_NAME)$(BINARY_WIN)
 	
-release: clean build-win
-	mkdir $(RELEASEDIR)
-	zip -r $(RELEASEDIR)/$(RELEASEFILE) $(BUILDDIR)
+release: clean setup build-win
+	zip -r $(RELEASEDIR)/$(RELEASEFILE) $(RELEASEDIR)
 	
 	

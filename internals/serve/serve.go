@@ -16,5 +16,5 @@ func Start(phpBin string, host string, docRoot string) error {
 	}
 
 	return nil
-	
+
 }
