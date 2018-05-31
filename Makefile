@@ -47,6 +47,4 @@ build-win: clean setup
 	GOOS=windows GOARCH=386 $(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(APP_NAME)$(BINARY_WIN)
 	
 release: clean setup build-win
-	zip -r $(RELEASEDIR)/$(RELEASEFILE) $(RELEASEDIR)
-	
-	
+	cd $(BUILDDIR); zip -r $(APP_NAME).zip $(APP_NAME)
