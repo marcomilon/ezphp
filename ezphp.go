@@ -81,6 +81,7 @@ func searchForPhp(phpExe string) (string, error) {
 			return "", errors.New("php won't be installed. bye bye.")
 		}
 
+		output.Info("Please wait...\n")
 		path, err = install.Installer(install.Version, install.PhpDir)
 		if err != nil {
 			return "", errors.New(err.Error())
