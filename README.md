@@ -6,7 +6,7 @@ EzPHP is an alternative to Xamp/Wamp. EzPHP is the easiest way to setup a PHP de
 
 ### Installation
 
-Download [ezphp.zip](https://github.com/marcomilon/ezphp/releases/download/1.0.0/ezphp.zip) to your desktop.
+Download [ezphp.zip](https://github.com/marcomilon/ezphp/releases/download/1.0.1/ezphp.zip) to your desktop.
 
 ### How it works?
 
