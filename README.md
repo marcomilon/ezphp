@@ -23,6 +23,9 @@ EzPHP is available only for windows.
 PHP binaries required to have *Visual C++ Redistributable for Visual Studio 2017* installed on your computer.
 You may have installed in your PC. In case you need it you can download it from https://www.microsoft.com/en-us/download/details.aspx?id=48145
 
+### Can i use EzPHP on command line (e.g. PowerShell)?
+
+No, EzPHP does not support running PHP from command line.
 
 ### Contribution
 
