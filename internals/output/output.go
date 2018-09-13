@@ -27,6 +27,6 @@ func Installer(s string) {
 
 func Custom(level string, s string) {
 	green := color.New(color.FgGreen)
-	green.Printf("[%s] ",  time.Now().Format(time.Stamp))
+	green.Printf("[%s] ", time.Now().Format(time.Stamp))
 	fmt.Print(s)
 }

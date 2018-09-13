@@ -20,16 +20,23 @@ const (
 
 func main() {
 
+	var versionFlag bool;
+
 	var defaultExecPath string
 	var err error
-
-	banner()
 
 	php := flag.String("php", "", "Path to php executable")
 	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
 	public := flag.String("public", "public", "Path to public directory")
+	flag.BoolVar(&versionFlag, "v", false, "Prints about message")
+	
 
 	flag.Parse()
+
+	if versionFlag {
+		banner()
+		return
+	}
 
 	if *php == "" {
 
@@ -117,5 +124,4 @@ func banner() {
 	fmt.Println("| |____ / /| |    | |  | | |     ")
 	fmt.Println("|______/___|_|    |_|  |_|_|     ")
 	fmt.Println("Author", "marco.milon@gmail.com")
-	fmt.Println("")
 }
