@@ -1,13 +1,12 @@
-package serve
+package php
 
 import (
 	"os"
 	"os/exec"
 )
 
-func Start(phpBin string, host string, docRoot string) error {
-
-	cmd := exec.Command(phpBin, "-S", host, "-t", docRoot)
+func Serve(php string, host string, docRoot string) error {
+	cmd := exec.Command(php, "-S", host, "-t", docRoot)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
@@ -16,5 +15,4 @@ func Start(phpBin string, host string, docRoot string) error {
 	}
 
 	return nil
-
 }

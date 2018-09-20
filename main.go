@@ -1,127 +1,73 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
+	"runtime"
 
-	"github.com/marcomilon/ezphp/internals/install"
-	"github.com/marcomilon/ezphp/internals/output"
-	"github.com/marcomilon/ezphp/internals/serve"
+	"github.com/marcomilon/ezphp/internals/helpers/fs"
+	"github.com/marcomilon/ezphp/internals/helpers/output"
+	"github.com/marcomilon/ezphp/internals/helpers/prompt"
+	"github.com/marcomilon/ezphp/internals/php"
 )
 
 const (
-	phpExe = "php.exe"
+	downloadUrl  = "https://windows.php.net/downloads/releases/archives/"
+	version      = "php-7.0.0-Win32-VC14-x64.zip"
+	target       = "php-7.0.0"
+	ezPHPVersion = "0.0.1"
+	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
 )
 
 func main() {
 
-	var versionFlag bool;
-
+	var versionFlag bool
 	var defaultExecPath string
 	var err error
 
-	php := flag.String("php", "", "Path to php executable")
+	phpExec := flag.String("php", php.PHP_EXECUTABLE, "Path to php executable")
 	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
-	public := flag.String("public", "public", "Path to public directory")
+	public := flag.String("public", ".", "Path to public directory")
 	flag.BoolVar(&versionFlag, "v", false, "Prints about message")
-	
 
 	flag.Parse()
 
 	if versionFlag {
-		banner()
+		about()
 		return
 	}
 
-	if *php == "" {
-
-		defaultExecPath, err = searchForPhp(phpExe)
-		if err != nil {
-			output.Error(err.Error() + "\n")
-			output.Info("Press Enter to exit... ")
-			fmt.Scanln()
-			fmt.Scanln()
-			return
-		}
-
-		php = &defaultExecPath
-	}
-
-	output.Info("Your document root directory is: " + *public + "\n")
-	install.CreateDirIfNotExist(*public)
-
-	err = serve.Start(*php, *host, *public)
+	defaultExecPath, err = fs.WhereIsGlobalPHP(*phpExec)
 	if err != nil {
-		output.Error("Unable to execute PHP: " + err.Error() + "\n")
-		output.Error("Press Enter to continue... ")
-		fmt.Scanln()
-	}
 
-	return
-}
+		defaultExecPath, err = fs.WhereIsLocalPHP(*phpExec)
 
-func searchForPhp(phpExe string) (string, error) {
-
-	var defaultExecPath string
-	var path string
-	var err error
-	var absPath string
-
-	output.Info("Looking for php in default directory: " + install.PhpDir + "\n")
-	if _, err = os.Stat(install.PhpDir); err == nil {
-		output.Info("Local php installation founded\n")
-		absPath, _ = filepath.Abs(filepath.Dir(install.PhpDir))
-		defaultExecPath = absPath + string(os.PathSeparator) + install.PhpDir + string(os.PathSeparator) + phpExe
-		return defaultExecPath, nil
-	}
-
-	defaultExecPath, err = exec.LookPath(phpExe)
-	if err != nil {
-		output.Error("php executable not found in path\n")
-
-		if !askToInstallPhp() {
-			return "", errors.New("php won't be installed. bye bye.")
-		}
-
-		output.Info("Please wait...\n")
-		path, err = install.Installer(install.Version, install.PhpDir)
 		if err != nil {
-			return "", errors.New(err.Error())
+			output.Info("PHP not installed\n")
+			if runtime.GOOS == "linux" {
+				if prompt.Confirm("Would you like to install PHP locally") {
+					defaultExecPath, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
+				}
+			} else {
+				output.Info("Auto installer not available in your Operation System\n")
+				output.Info("Please install PHP using your favorite package manager\n")
+			}
 		}
 
-		defaultExecPath = path + string(os.PathSeparator) + phpExe
 	}
 
-	return defaultExecPath, nil
+	php.Serve(defaultExecPath, *host, *public)
+
 }
 
-func askToInstallPhp() bool {
-	var confirmation string
-
-	output.Installer("Would you like to install php locally [y/N]? ")
-	fmt.Scan(&confirmation)
-
-	confirmation = strings.TrimSpace(confirmation)
-	confirmation = strings.ToLower(confirmation)
-
-	if confirmation == "y" || confirmation == "yes" {
-		return true
-	}
-
-	return false
-}
-
-func banner() {
+func about() {
 	fmt.Println(" ______     _____  _    _ _____  ")
 	fmt.Println("|  ____|   |  __ \\| |  | |  __ \\ ")
 	fmt.Println("| |__   ___| |__) | |__| | |__) |")
 	fmt.Println("|  __| |_  /  ___/|  __  |  ___/ ")
 	fmt.Println("| |____ / /| |    | |  | | |     ")
 	fmt.Println("|______/___|_|    |_|  |_|_|     ")
-	fmt.Println("Author", "marco.milon@gmail.com")
+	fmt.Println("")
+	fmt.Printf("website: %s\n", ezPHPWebsite)
+	fmt.Printf("version: %s\n", ezPHPVersion)
 }

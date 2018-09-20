@@ -1,4 +1,4 @@
-package install
+package php
 
 import (
 	"archive/zip"
@@ -7,22 +7,18 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/marcomilon/ezphp/internals/helpers/fs"
 )
 
-const (
-	downloadUrl = "https://windows.php.net/downloads/releases/archives/"
-	PhpDir      = "php-7.0.0"
-	Version     = "php-7.0.0-Win32-VC14-x64.zip"
-)
+func DownloadAndInstallPHP(downloadUrl string, version string, destination string) (string, error) {
 
-var (
-	absPath string
-	err     error
-)
+	var (
+		absPath string
+		err     error
+	)
 
-func Installer(version string, destination string) (string, error) {
-
-	err = CreateDirIfNotExist(destination)
+	err = fs.CreateDirIfNotExist(destination)
 	if err != nil {
 		return "", err
 	}
@@ -147,17 +143,6 @@ func unzip(src string, dest string) error {
 
 	for _, f := range r.File {
 		err := extractAndWriteFile(f)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func CreateDirIfNotExist(dir string) error {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err = os.MkdirAll(dir, 0755)
 		if err != nil {
 			return err
 		}
