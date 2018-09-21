@@ -1,14 +1,18 @@
 package php
 
 import (
-	"os"
 	"os/exec"
+
+	"github.com/marcomilon/ezphp/internals/helpers/ezio"
 )
 
 func Serve(php string, host string, docRoot string) error {
+
+	ezOut := ezio.EzOut{Prompt: " EzPHP"}
+
 	cmd := exec.Command(php, "-S", host, "-t", docRoot)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = ezOut
+	cmd.Stderr = ezOut
 	err := cmd.Run()
 	if err != nil {
 		return err

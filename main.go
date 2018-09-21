@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"path/filepath"
 	"runtime"
 
+	"github.com/marcomilon/ezphp/internals/helpers/ezio"
 	"github.com/marcomilon/ezphp/internals/helpers/fs"
-	"github.com/marcomilon/ezphp/internals/helpers/output"
-	"github.com/marcomilon/ezphp/internals/helpers/prompt"
 	"github.com/marcomilon/ezphp/internals/php"
 )
 
@@ -43,19 +43,23 @@ func main() {
 		defaultExecPath, err = fs.WhereIsLocalPHP(*phpExec)
 
 		if err != nil {
-			output.Info("PHP not installed\n")
+			ezio.Info("PHP not installed\n")
 			if runtime.GOOS == "linux" {
-				if prompt.Confirm("Would you like to install PHP locally") {
+				if ezio.Confirm("Would you like to install PHP locally") {
 					defaultExecPath, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
 				}
 			} else {
-				output.Info("Auto installer not available in your Operation System\n")
-				output.Info("Please install PHP using your favorite package manager\n")
+				ezio.Info("Auto installer not available in your Operation System\n")
+				ezio.Info("Please install PHP using your favorite package manager\n")
 			}
 		}
 
 	}
 
+	pathToDocRoot, _ := filepath.Abs(filepath.Dir(*public))
+	ezio.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
+	ezio.Info(fmt.Sprintf("Document root is: %s\n", pathToDocRoot))
+	ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
 	php.Serve(defaultExecPath, *host, *public)
 
 }
