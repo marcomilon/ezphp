@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 
@@ -44,13 +46,15 @@ func main() {
 
 		if err != nil {
 			ezio.Info("PHP not installed\n")
-			if runtime.GOOS == "linux" {
+			if runtime.GOOS == "windows" {
 				if ezio.Confirm("Would you like to install PHP locally") {
 					defaultExecPath, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
 				}
 			} else {
 				ezio.Info("Auto installer not available in your Operation System\n")
 				ezio.Info("Please install PHP using your favorite package manager\n")
+				bybye()
+				return				
 			}
 		}
 
@@ -62,6 +66,11 @@ func main() {
 	ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
 	php.Serve(defaultExecPath, *host, *public)
 
+}
+
+func bybye() {
+	ezio.Info("Press 'Enter' to continue...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
 
 func about() {
