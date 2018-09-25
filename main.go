@@ -23,9 +23,12 @@ const (
 
 func main() {
 
-	var versionFlag bool
-	var defaultExecPath string
-	var err error
+	var (
+		versionFlag     bool
+		defaultExecPath string
+		err             error
+		pathToPHP       string
+	)
 
 	phpExec := flag.String("php", php.PHP_EXECUTABLE, "Path to php executable")
 	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
@@ -45,16 +48,20 @@ func main() {
 		defaultExecPath, err = fs.WhereIsLocalPHP(*phpExec)
 
 		if err != nil {
-			ezio.Info("PHP not installed\n")
+			ezio.Info(php.PHP_EXECUTABLE + " not found\n")
 			if runtime.GOOS == "windows" {
 				if ezio.Confirm("Would you like to install PHP locally") {
-					defaultExecPath, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
+					pathToPHP, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
+					defaultExecPath = pathToPHP + php.PHP_EXECUTABLE
+				} else {
+					bybye()
+					return
 				}
 			} else {
 				ezio.Info("Auto installer not available in your Operation System\n")
 				ezio.Info("Please install PHP using your favorite package manager\n")
 				bybye()
-				return				
+				return
 			}
 		}
 
@@ -64,7 +71,11 @@ func main() {
 	ezio.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
 	ezio.Info(fmt.Sprintf("Document root is: %s\n", pathToDocRoot))
 	ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
-	php.Serve(defaultExecPath, *host, *public)
+	err = php.Serve(defaultExecPath, *host, *public)
+	if err != nil {
+		ezio.Info(err.Error())
+		bybye()
+	}
 
 }
 
