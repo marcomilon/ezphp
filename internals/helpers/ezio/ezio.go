@@ -48,9 +48,9 @@ func Installer(s string) {
 	fmt.Print(s)
 }
 
-func Custom(level string, s string) {
+func Custom(s string) {
 	green := color.New(color.FgGreen)
-	green.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
+	green.Printf("[%-17s] ", time.Now().Format(DATE_FORMAT))
 	fmt.Print(s)
 }
 
