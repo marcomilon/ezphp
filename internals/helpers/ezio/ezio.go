@@ -17,12 +17,16 @@ type EzOut struct {
 
 func (e EzOut) Write(b []byte) (int, error) {
 	s := string(b[0:])
+	log := strings.TrimSpace(s)
 
-	re := regexp.MustCompile(`(\[\S+ \S+ \S+ \d+:\d+:\d+ \d+\]) (.+) (\[\d{3}\])(.+)`)
-	submatchall := re.FindStringSubmatch(s)
-	green := color.New(color.FgGreen)
-	green.Printf("%s ", submatchall[1])
-	fmt.Println(submatchall[2] + submatchall[3] + submatchall[4])
+	re := regexp.MustCompile(`\[?(\S+ \S+ \S+ \d+:\d+:\d+ \d+)\] (.+) (\[\d{3}\])(.+)`)
+	if re.MatchString(log) {
+		submatchall := re.FindStringSubmatch(log)
+		green := color.New(color.FgGreen)
+		green.Printf("[%s] ", submatchall[1])
+		fmt.Println(submatchall[2] + submatchall[3] + submatchall[4])
+	}
+
 	return len(b), nil
 }
 
@@ -33,7 +37,7 @@ func Info(s string) {
 }
 
 func Error(s string) {
-	red := color.New(color.FgGreen)
+	red := color.New(color.FgRed)
 	red.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
 	fmt.Print(s)
 }
