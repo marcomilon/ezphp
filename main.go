@@ -51,15 +51,25 @@ func main() {
 
 		if err != nil {
 			ezio.Error(fmt.Sprintf("%s\n", err.Error()))
-			if runtime.GOOS == "windows" {
+			if runtime.GOOS == "linux" {
 				if ezio.Confirm("Would you like to install PHP locally") {
+
+					ezio.Info(fmt.Sprintf("Downloading PHP from %s\n", downloadUrl))
+
 					pathToPHP, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
+
+					if err != nil {
+						ezio.Error("Something went wrong\n")
+						ezio.Error(fmt.Sprintf("%s\n", err.Error()))
+						bybye()
+					}
+
 					defaultExecPath = pathToPHP + php.PHP_EXECUTABLE
 				} else {
 					bybye()
 				}
 			} else {
-				ezio.Info(fmt.Sprintf("%s: %s", "Installer not available in your Operation System\n", runtime.GOOS))
+				ezio.Info(fmt.Sprintf("%s: %s\n", "Installer not available in your Operation System", runtime.GOOS))
 				ezio.Info("Please install PHP using your favorite package manager\n")
 				bybye()
 			}
@@ -82,7 +92,7 @@ func main() {
 }
 
 func bybye() {
-	ezio.Info("Press 'Enter' to continue...")
+	ezio.Info("Press 'Enter' to exit...")
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 	os.Exit(0)
 }
