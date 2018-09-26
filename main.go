@@ -17,7 +17,7 @@ const (
 	downloadUrl  = "https://windows.php.net/downloads/releases/archives/"
 	version      = "php-7.0.0-Win32-VC14-x64.zip"
 	target       = "php-7.0.0"
-	ezPHPVersion = "0.0.1"
+	ezPHPVersion = "1.1.0"
 	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
 )
 
