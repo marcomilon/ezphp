@@ -28,8 +28,7 @@ format:
 build-linux: clean
 	$(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)
 	
-build-win: clean setup
+build-win: format clean setup
 	GOOS=windows GOARCH=386 $(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)$(BINARY_WIN)
 	
 release: build-win
-	cd $(BUILDDIR); zip -r $(RELEASE_NAME).zip $(RELEASE_NAME)
