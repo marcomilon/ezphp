@@ -42,6 +42,9 @@ func main() {
 		return
 	}
 
+	ezio.Info("EzPHP\n")
+	ezio.Info(fmt.Sprintf("website: %s\n", ezPHPWebsite))
+
 	defaultExecPath, err = fs.WhereIsGlobalPHP(*phpExec)
 	if err != nil {
 
@@ -51,10 +54,12 @@ func main() {
 
 		if err != nil {
 			ezio.Error(fmt.Sprintf("%s\n", err.Error()))
-			if runtime.GOOS == "linux" {
+			if runtime.GOOS == "windows" {
 				if ezio.Confirm("Would you like to install PHP locally") {
 
+					absTargetPath, _ := filepath.Abs(filepath.Dir(target))
 					ezio.Info(fmt.Sprintf("Downloading PHP from %s\n", downloadUrl))
+					ezio.Info(fmt.Sprintf("Installing PHP in %s\n", absTargetPath))
 
 					pathToPHP, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
 
@@ -81,6 +86,7 @@ func main() {
 
 	pathToDocRoot, _ := filepath.Abs(filepath.Dir(*public))
 	ezio.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
+	ezio.Info("Server is ready\n")
 	ezio.Info(fmt.Sprintf("Document root is: %s\n", pathToDocRoot))
 	ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
 	err = php.Serve(defaultExecPath, *host, *public)
