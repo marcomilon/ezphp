@@ -45,24 +45,26 @@ func main() {
 	defaultExecPath, err = fs.WhereIsGlobalPHP(*phpExec)
 	if err != nil {
 
-		defaultExecPath, err = fs.WhereIsLocalPHP(*phpExec)
+		ezio.Error(fmt.Sprintf("%s\n", err.Error()))
+
+		defaultExecPath, err = fs.WhereIsLocalPHP(*phpExec, target)
 
 		if err != nil {
-			ezio.Info(php.PHP_EXECUTABLE + " not found\n")
+			ezio.Error(fmt.Sprintf("%s\n", err.Error()))
 			if runtime.GOOS == "windows" {
 				if ezio.Confirm("Would you like to install PHP locally") {
 					pathToPHP, err = php.DownloadAndInstallPHP(downloadUrl, version, target)
 					defaultExecPath = pathToPHP + php.PHP_EXECUTABLE
 				} else {
 					bybye()
-					return
 				}
 			} else {
-				ezio.Info("Auto installer not available in your Operation System\n")
+				ezio.Info(fmt.Sprintf("%s: %s", "Installer not available in your Operation System\n", runtime.GOOS))
 				ezio.Info("Please install PHP using your favorite package manager\n")
 				bybye()
-				return
 			}
+		} else {
+			ezio.Info(fmt.Sprintf("Local installation of PHP founded in: %s\n", defaultExecPath))
 		}
 
 	}
@@ -73,15 +75,16 @@ func main() {
 	ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
 	err = php.Serve(defaultExecPath, *host, *public)
 	if err != nil {
-		ezio.Info(err.Error())
+		ezio.Error("Something went wrong\n")
+		ezio.Error(fmt.Sprintf("%s\n", err.Error()))
 		bybye()
 	}
-
 }
 
 func bybye() {
 	ezio.Info("Press 'Enter' to continue...")
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	os.Exit(0)
 }
 
 func about() {
