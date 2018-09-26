@@ -25,6 +25,7 @@ func main() {
 
 	var (
 		versionFlag     bool
+		cliFlag         bool
 		defaultExecPath string
 		err             error
 		pathToPHP       string
@@ -34,6 +35,7 @@ func main() {
 	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
 	public := flag.String("public", ".", "Path to public directory")
 	flag.BoolVar(&versionFlag, "v", false, "Prints about message")
+	flag.BoolVar(&cliFlag, "cli", false, "Runs PHP command line interpreter")
 
 	flag.Parse()
 
@@ -41,9 +43,6 @@ func main() {
 		about()
 		return
 	}
-
-	ezio.Info("EzPHP\n")
-	ezio.Info(fmt.Sprintf("website: %s\n", ezPHPWebsite))
 
 	defaultExecPath, err = fs.WhereIsGlobalPHP(*phpExec)
 	if err != nil {
@@ -84,16 +83,34 @@ func main() {
 
 	}
 
-	pathToDocRoot, _ := filepath.Abs(filepath.Dir(*public))
-	ezio.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
-	ezio.Info("Server is ready\n")
-	ezio.Info(fmt.Sprintf("Document root is: %s\n", pathToDocRoot))
-	ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
-	err = php.Serve(defaultExecPath, *host, *public)
-	if err != nil {
-		ezio.Error("Something went wrong\n")
-		ezio.Error(fmt.Sprintf("%s\n", err.Error()))
-		bybye()
+	if cliFlag {
+
+		arg := os.Args[2]
+		err = php.Cli(defaultExecPath, arg)
+		if err != nil {
+			ezio.Error("Something went wrong\n")
+			ezio.Error(fmt.Sprintf("%s\n", err.Error()))
+			bybye()
+		}
+
+	} else {
+
+		ezio.Info("EzPHP\n")
+		ezio.Info(fmt.Sprintf("website: %s\n", ezPHPWebsite))
+
+		pathToDocRoot, _ := filepath.Abs(filepath.Dir(*public))
+
+		ezio.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
+		ezio.Info("Server is ready\n")
+		ezio.Info(fmt.Sprintf("Document root is: %s\n", pathToDocRoot))
+		ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
+
+		err = php.Serve(defaultExecPath, *host, *public)
+		if err != nil {
+			ezio.Error("Something went wrong\n")
+			ezio.Error(fmt.Sprintf("%s\n", err.Error()))
+			bybye()
+		}
 	}
 }
 
