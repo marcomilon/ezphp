@@ -3,13 +3,37 @@ package php
 import (
 	"archive/zip"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/dustin/go-humanize"
+	"github.com/marcomilon/ezphp/internals/helpers/ezio"
 	"github.com/marcomilon/ezphp/internals/helpers/fs"
 )
+
+type WriteCounter struct {
+	Total uint64
+}
+
+func (wc *WriteCounter) Write(p []byte) (int, error) {
+	n := len(p)
+	wc.Total += uint64(n)
+	wc.PrintProgress()
+	return n, nil
+}
+
+func (wc WriteCounter) PrintProgress() {
+	// Clear the line by using a character return to go back to the start and remove
+	// the remaining characters by filling it with spaces
+	fmt.Printf("\r%s", "")
+
+	// Return again and print current status of download
+	// We use the humanize package to print the bytes in a meaningful way (e.g. 10 MB)
+	ezio.Custom(fmt.Sprintf("Please wait... %s complete", humanize.Bytes(wc.Total)))
+}
 
 func DownloadAndInstallPHP(downloadUrl string, version string, destination string) (string, error) {
 
@@ -74,10 +98,13 @@ func download(url string, dest string) error {
 	defer out.Close()
 
 	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
+	counter := &WriteCounter{}
+	_, err = io.Copy(out, io.TeeReader(resp.Body, counter))
 	if err != nil {
 		return err
 	}
+
+	fmt.Print("\n")
 
 	return nil
 }
