@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -24,25 +25,18 @@ const (
 func main() {
 
 	var (
-		versionFlag     bool
-		cliFlag         bool
 		defaultExecPath string
 		err             error
 		pathToPHP       string
+		ezOut           io.Writer
+		ezErr           io.Writer
 	)
 
 	phpExec := flag.String("php", php.PHP_EXECUTABLE, "Path to php executable")
-	host := flag.String("host", "localhost:8080", "Listening address: <addr>:<port> ")
-	public := flag.String("public", ".", "Path to public directory")
-	flag.BoolVar(&versionFlag, "v", false, "Prints about message")
-	flag.BoolVar(&cliFlag, "cli", false, "Runs PHP command line interpreter")
+	serve := flag.String("S", "localhost:8080", "Listening address: <addr>:<port> ")
+	documentRoot := flag.String("t", ".", "Document root: default value current directory")
 
 	flag.Parse()
-
-	if versionFlag {
-		about()
-		return
-	}
 
 	defaultExecPath, err = fs.WhereIsGlobalPHP(*phpExec)
 	if err != nil {
@@ -83,35 +77,40 @@ func main() {
 
 	}
 
-	if cliFlag {
-
-		arg := os.Args[2]
-		err = php.Cli(defaultExecPath, arg)
-		if err != nil {
-			ezio.Error("Something went wrong\n")
-			ezio.Error(fmt.Sprintf("%s\n", err.Error()))
-			bybye()
-		}
-
-	} else {
-
+	if len(*serve) > 0 {
+		absDocumentRootPath, _ := filepath.Abs(filepath.Dir(*documentRoot))
 		ezio.Info("EzPHP\n")
 		ezio.Info(fmt.Sprintf("website: %s\n", ezPHPWebsite))
-
-		pathToDocRoot, _ := filepath.Abs(filepath.Dir(*public))
-
 		ezio.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
 		ezio.Info("Server is ready\n")
-		ezio.Info(fmt.Sprintf("Document root is: %s\n", pathToDocRoot))
-		ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *host))
+		ezio.Info(fmt.Sprintf("Document root is: %s\n", absDocumentRootPath))
+		ezio.Info(fmt.Sprintf("Open your web browser to: http://%s\n", *serve))
 
-		err = php.Serve(defaultExecPath, *host, *public)
-		if err != nil {
-			ezio.Error("Something went wrong\n")
-			ezio.Error(fmt.Sprintf("%s\n", err.Error()))
-			bybye()
+		ezOut = ezio.EzOut{Prompt: " Serve"}
+		ezOut = ezOut
+		ezErr = ezOut
+
+	} else {
+		ezOut = os.Stdout
+		ezErr = os.Stderr
+	}
+	
+	err = php.Run(defaultExecPath, os.Args, ezOut, ezErr)
+	if err != nil {
+		ezio.Error("Something went wrong\n")
+		ezio.Error(fmt.Sprintf("%s\n", err.Error()))
+		bybye()
+	}
+
+}
+
+func serve(args []string) bool {
+	for _, v := range args {
+		if v == "-S" {
+			return true
 		}
 	}
+	return false
 }
 
 func bybye() {

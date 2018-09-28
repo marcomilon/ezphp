@@ -1,27 +1,15 @@
 package php
 
 import (
+	"io"
 	"os/exec"
-
-	"github.com/marcomilon/ezphp/internals/helpers/ezio"
 )
 
-func Cli(php string, arg string) error {
-	cmd := exec.Command(php, arg)
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func Serve(php string, host string, docRoot string) error {
-	ezOut := ezio.EzOut{Prompt: " Serve"}
-
-	cmd := exec.Command(php, "-S", host, "-t", docRoot)
-	cmd.Stdout = ezOut
-	cmd.Stderr = ezOut
+func Run(php string, arg []string, stdout io.Writer, stderr io.Writer) error {
+	arguments := arg[1:]
+	cmd := exec.Command(php, arguments...)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
 	err := cmd.Run()
 	if err != nil {
 		return err
