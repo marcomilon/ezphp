@@ -1,4 +1,4 @@
-package ezio
+package cli
 
 import (
 	"fmt"
@@ -11,11 +11,9 @@ import (
 
 const DATE_FORMAT = "Mon Jan _2 15:04:05 2006"
 
-type EzOut struct {
-	Prompt string
-}
+type InOut struct{}
 
-func (e EzOut) Write(b []byte) (int, error) {
+func (InOut) Write(b []byte) (int, error) {
 	s := string(b[0:])
 	log := strings.TrimSpace(s)
 
@@ -25,40 +23,38 @@ func (e EzOut) Write(b []byte) (int, error) {
 		green := color.New(color.FgGreen)
 		green.Printf("[%s] ", submatchall[1])
 		fmt.Println(submatchall[2] + submatchall[3] + submatchall[4])
+	} else {
+		red := color.New(color.FgRed)
+		red.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
+		fmt.Print(s)
 	}
 
 	return len(b), nil
 }
 
-func Info(s string) {
+func (InOut) Info(s string) {
 	green := color.New(color.FgGreen)
 	green.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
 	fmt.Print(s)
 }
 
-func Error(s string) {
+func (InOut) Error(s string) {
 	red := color.New(color.FgRed)
 	red.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
 	fmt.Print(s)
 }
 
-func Installer(s string) {
-	green := color.New(color.FgGreen)
-	green.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
+func (InOut) Custom(tag string, s string) {
+	red := color.New(color.FgYellow)
+	red.Printf("[%-24s] ", tag)
 	fmt.Print(s)
 }
 
-func Custom(s string) {
-	green := color.New(color.FgGreen)
-	green.Printf("[%-17s] ", time.Now().Format(DATE_FORMAT))
-	fmt.Print(s)
-}
-
-func Confirm(question string) bool {
+func (io InOut) Confirm(question string) bool {
 
 	var confirmation string
 
-	Info(fmt.Sprintf("%s [y/N]? ", question))
+	io.Info(fmt.Sprintf("%s [y/N]? ", question))
 	fmt.Scan(&confirmation)
 
 	confirmation = strings.TrimSpace(confirmation)

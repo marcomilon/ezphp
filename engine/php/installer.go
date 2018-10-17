@@ -2,40 +2,18 @@ package php
 
 import (
 	"archive/zip"
-	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
-	"github.com/dustin/go-humanize"
-	"github.com/marcomilon/ezphp/internals/helpers/ezio"
-	"github.com/marcomilon/ezphp/internals/helpers/fs"
+	"github.com/cavaliercoder/grab"
+	"github.com/marcomilon/ezphp/engine/ezio"
+	"github.com/marcomilon/ezphp/engine/fs"
 )
 
-type WriteCounter struct {
-	Total uint64
-}
-
-func (wc *WriteCounter) Write(p []byte) (int, error) {
-	n := len(p)
-	wc.Total += uint64(n)
-	wc.PrintProgress()
-	return n, nil
-}
-
-func (wc WriteCounter) PrintProgress() {
-	// Clear the line by using a character return to go back to the start and remove
-	// the remaining characters by filling it with spaces
-	fmt.Printf("\r%s", "")
-
-	// Return again and print current status of download
-	// We use the humanize package to print the bytes in a meaningful way (e.g. 10 MB)
-	ezio.Custom(fmt.Sprintf("Please wait... %s complete", humanize.Bytes(wc.Total)))
-}
-
-func DownloadAndInstallPHP(downloadUrl string, version string, destination string) (string, error) {
+func DownloadAndInstallPHP(downloadUrl string, version string, destination string, ezIO ezio.EzIO) (string, error) {
 
 	var (
 		absPath string
@@ -47,7 +25,7 @@ func DownloadAndInstallPHP(downloadUrl string, version string, destination strin
 		return "", err
 	}
 
-	err = download(downloadUrl+version, destination+string(os.PathSeparator)+version)
+	err = grabPHP(downloadUrl+version, destination+string(os.PathSeparator)+version, ezIO)
 	if err != nil {
 		return "", err
 	}
@@ -71,42 +49,6 @@ func DownloadAndInstallPHP(downloadUrl string, version string, destination strin
 	}
 
 	return path, nil
-}
-
-func download(url string, dest string) error {
-
-	if _, err := os.Stat(dest); err == nil {
-		return nil
-	}
-
-	// Get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return errors.New("Unable to download File: " + url)
-	}
-
-	// Create the file
-	out, err := os.Create(dest)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	// Write the body to file
-	counter := &WriteCounter{}
-	_, err = io.Copy(out, io.TeeReader(resp.Body, counter))
-	if err != nil {
-		return err
-	}
-
-	fmt.Print("\n")
-
-	return nil
 }
 
 func unzip(src string, dest string) error {
@@ -175,5 +117,42 @@ func unzip(src string, dest string) error {
 		}
 	}
 
+	return nil
+}
+
+func grabPHP(url string, destination string, ezIO ezio.EzIO) error {
+	client := grab.NewClient()
+	req, _ := grab.NewRequest(destination, url)
+
+	// start download
+	ezIO.Info(fmt.Sprintf("Downloading %v...\n", req.URL()))
+	resp := client.Do(req)
+
+	// start UI loop
+	t := time.NewTicker(500 * time.Millisecond)
+	defer t.Stop()
+
+Loop:
+	for {
+		select {
+		case <-t.C:
+			ezIO.Custom("Please wait", fmt.Sprintf("Transferred %v / %v bytes (%.2f%%)\r",
+				resp.BytesComplete(),
+				resp.Size,
+				100*resp.Progress()))
+
+		case <-resp.Done:
+			// download is complete
+			break Loop
+		}
+	}
+
+	// check for errors
+	if err := resp.Err(); err != nil {
+		ezIO.Error(fmt.Sprintf("Download failed: %v\n", err))
+		return err
+	}
+
+	ezIO.Info(fmt.Sprintf("Download saved to ./%v \n", resp.Filename))
 	return nil
 }

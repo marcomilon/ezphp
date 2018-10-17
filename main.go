@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/marcomilon/ezphp/internals/cli"
+	"github.com/marcomilon/ezphp/cli"
 )
 
 func main() {
-	cli.Start();
+	cli.Start()
 }
