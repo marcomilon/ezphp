@@ -5,10 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
-	"runtime"
 
-	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
 )
 
@@ -25,79 +22,86 @@ type serveArguments struct {
 	documentRoot string
 }
 
+func Clean() {
+	var installer php.EzInstaller = php.Installer{
+		downloadUrl,
+		"tmp",
+		"3234",
+	}
+
+	installer.WhereIs(os.Stdout)
+	installer.Download(os.Stdout)
+	installer.Install(os.Stdout)
+}
+
 func Start() {
 
-	var (
-		defaultExecPath string
-		err             error
-		pathToPHP       string
-	)
-
-	phpExec := php.PHP_EXECUTABLE
-	ezIO := InOut{}
-	defaultExecPath, err = fs.WhereIsGlobalPHP(phpExec)
-
-	startWebServer := startWebServer()
-
-	if err != nil {
-
-		ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
-
-		defaultExecPath, err = fs.WhereIsLocalPHP(phpExec, target)
-
-		if err != nil {
-
-			ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
-
-			if runtime.GOOS == "windows" {
-
-				if ezIO.Confirm("Would you like to install PHP locally") {
-
-					pathToPHP, err = php.DownloadAndInstallPHP(downloadUrl, version, target, ezIO)
-
-					if err != nil {
-						ezIO.Error("Something went wrong\n")
-						ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
-						bybye(ezIO)
-					}
-
-					defaultExecPath = pathToPHP + php.PHP_EXECUTABLE
-				} else {
-					bybye(ezIO)
-				}
-
-			} else {
-				ezIO.Info(fmt.Sprintf("%s: %s\n", "Installer not available in your Operation System", runtime.GOOS))
-				ezIO.Info("Please install PHP using your favorite package manager\n")
-				bybye(ezIO)
-			}
-		} else {
-			ezIO.Info(fmt.Sprintf("Local installation of PHP founded in: %s\n", defaultExecPath))
-		}
-	}
-
-	if startWebServer {
-		serverArguments := parseServeFlag()
-		absDocumentRootPath, _ := filepath.Abs(filepath.Dir(serverArguments.documentRoot))
-		fs.CreateDirIfNotExist(fmt.Sprintf("%s/%s", absDocumentRootPath, serverArguments.documentRoot))
-
-		ezIO.Info("EzPHP\n")
-		ezIO.Info(fmt.Sprintf("website: %s\n", ezPHPWebsite))
-		ezIO.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
-		ezIO.Info("Server is ready\n")
-		ezIO.Info(fmt.Sprintf("Document root is: %s/%s\n", absDocumentRootPath, serverArguments.documentRoot))
-		ezIO.Info(fmt.Sprintf("Open your web browser to: http://%s\n", serverArguments.address))
-
-		err = php.Run(defaultExecPath, os.Args, ezIO, ezIO)
-	} else {
-		err = php.Run(defaultExecPath, os.Args, os.Stdout, os.Stderr)
-	}
-
-	if err != nil {
-		ezIO.Error("Something went wrong\n")
-		ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
-		bybye(ezIO)
-	}
+	// var (
+	// 	defaultExecPath string
+	// 	err             error
+	// 	pathToPHP       string
+	// )
+	//
+	// phpExec := php.PHP_EXECUTABLE
+	// ezIO := InOut{}
+	//
+	// defaultExecPath, err = fs.WhereIsGlobalPHP(phpExec)
+	//
+	// if err != nil {
+	//
+	// 	ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
+	//
+	// 	defaultExecPath, err = fs.WhereIsLocalPHP(phpExec, target)
+	//
+	// 	if err != nil {
+	//
+	// 		ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
+	//
+	// 		if runtime.GOOS == "windows" {
+	//
+	// 			if ezIO.Confirm("Would you like to install PHP locally") {
+	//
+	// 				pathToPHP, err = php.DownloadAndInstallPHP(downloadUrl, version, target, ezIO)
+	//
+	// 				if err != nil {
+	// 					ezIO.Error("Something went wrong\n")
+	// 					ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
+	// 					bybye(ezIO)
+	// 				}
+	//
+	// 				defaultExecPath = pathToPHP + php.PHP_EXECUTABLE
+	// 			} else {
+	// 				bybye(ezIO)
+	// 			}
+	//
+	// 		} else {
+	// 			ezIO.Info(fmt.Sprintf("%s: %s\n", "Installer not available in your Operation System", runtime.GOOS))
+	// 			ezIO.Info("Please install PHP using your favorite package manager\n")
+	// 			bybye(ezIO)
+	// 		}
+	// 	} else {
+	// 		ezIO.Info(fmt.Sprintf("Local installation of PHP founded in: %s\n", defaultExecPath))
+	// 	}
+	// }
+	//
+	// serverArguments := parseServeFlag()
+	// absDocumentRootPath, _ := filepath.Abs(filepath.Dir(serverArguments.documentRoot))
+	// fs.CreateDirIfNotExist(fmt.Sprintf("%s/%s", absDocumentRootPath, serverArguments.documentRoot))
+	//
+	// ezIO.Info("EzPHP\n")
+	// ezIO.Info(fmt.Sprintf("website: %s\n", ezPHPWebsite))
+	// ezIO.Info(fmt.Sprintf("Running PHP from: %s\n", defaultExecPath))
+	// ezIO.Info("Server is ready\n")
+	// ezIO.Info(fmt.Sprintf("Document root is: %s/%s\n", absDocumentRootPath, serverArguments.documentRoot))
+	// ezIO.Info(fmt.Sprintf("Open your web browser to: http://%s\n", serverArguments.address))
+	//
+	// err = php.Run(defaultExecPath, os.Args, ezIO, ezIO)
+	//
+	// if err != nil {
+	// 	ezIO.Error("Something went wrong\n")
+	// 	ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
+	// 	bybye(ezIO)
+	// }
 
 }
 
