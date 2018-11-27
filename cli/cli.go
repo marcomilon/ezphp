@@ -38,7 +38,7 @@ func Clean() {
 	ezIO.Info("Installing...\n")
 	installer.Install(ezIO)
 	
-	bybye(ezIO)
+	byebye(ezIO)
 }
 
 func Start() {
@@ -73,18 +73,18 @@ func Start() {
 	// 				if err != nil {
 	// 					ezIO.Error("Something went wrong\n")
 	// 					ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
-	// 					bybye(ezIO)
+	// 					byebye(ezIO)
 	// 				}
 	//
 	// 				defaultExecPath = pathToPHP + php.PHP_EXECUTABLE
 	// 			} else {
-	// 				bybye(ezIO)
+	// 				byebye(ezIO)
 	// 			}
 	//
 	// 		} else {
 	// 			ezIO.Info(fmt.Sprintf("%s: %s\n", "Installer not available in your Operation System", runtime.GOOS))
 	// 			ezIO.Info("Please install PHP using your favorite package manager\n")
-	// 			bybye(ezIO)
+	// 			byebye(ezIO)
 	// 		}
 	// 	} else {
 	// 		ezIO.Info(fmt.Sprintf("Local installation of PHP founded in: %s\n", defaultExecPath))
@@ -107,12 +107,12 @@ func Start() {
 	// if err != nil {
 	// 	ezIO.Error("Something went wrong\n")
 	// 	ezIO.Error(fmt.Sprintf("%s\n", err.Error()))
-	// 	bybye(ezIO)
+	// 	byebye(ezIO)
 	// }
 
 }
 
-func bybye(ezIO ezio.EzIO) {
+func byebye(ezIO ezio.EzIO) {
 	ezIO.Info("Press 'Enter' to exit...")
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 	os.Exit(0)
