@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/marcomilon/ezphp/engine/ezio"
 	"github.com/marcomilon/ezphp/engine/php"
 )
 
 const (
 	downloadUrl  = "https://windows.php.net/downloads/releases/archives/"
 	version      = "php-7.0.0-Win32-VC14-x64.zip"
-	target       = "php-7.0.0"
+	destination  = "php-7.0.0/"
 	ezPHPVersion = "1.1.0"
 	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
 )
@@ -23,15 +24,21 @@ type serveArguments struct {
 }
 
 func Clean() {
+
 	var installer php.EzInstaller = php.Installer{
 		downloadUrl,
-		"tmp",
-		"3234",
+		destination,
+		version,
 	}
 
-	installer.WhereIs(os.Stdout)
-	installer.Download(os.Stdout)
-	installer.Install(os.Stdout)
+	var ezIO ezio.EzIO = InOut{}
+
+	installer.WhereIs()
+
+	ezIO.Info("Installing...\n")
+	installer.Install(ezIO)
+	
+	bybye(ezIO)
 }
 
 func Start() {
@@ -105,7 +112,7 @@ func Start() {
 
 }
 
-func bybye(ezIO InOut) {
+func bybye(ezIO ezio.EzIO) {
 	ezIO.Info("Press 'Enter' to exit...")
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 	os.Exit(0)

@@ -1,44 +1,38 @@
 package php
 
 import (
-	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/cavaliercoder/grab"
+	"github.com/marcomilon/ezphp/engine/ezio"
 )
 
-type Installer struct {
-	Source      string
-	Destination string
-	Version     string
-}
-
-func (i Installer) Download(w io.Writer) error {
-	fmt.Fprint(w, "Downloading...\n")
-
+func (i Installer) Install(w ezio.EzIO) error {
+	i.download()
 	return nil
 }
 
-func (i Installer) Install(w io.Writer) error {
-	fmt.Fprint(w, "Installing...\n")
-
-	return nil
-}
-
-func (i Installer) WhereIs(w io.Writer) (string, error) {
-	var php string
+func (i Installer) WhereIs() (string, error) {
+	var phpPath string
 	var err error
 
-	fmt.Fprint(w, "Search for php...\n")
-	php, err = whereIsGlobalPHP(PHP_EXECUTABLE)
+	phpPath, err = whereIsGlobalPHP(PHP_EXECUTABLE)
 	if err != nil {
-		fmt.Fprint(w, "Search for php in %s...\n", i.Destination)
-		php, err = whereIsLocalPHP(PHP_EXECUTABLE, i.Destination)
+		phpPath, err = whereIsLocalPHP(PHP_EXECUTABLE, i.Destination)
 	}
 
-	fmt.Fprint(w, fmt.Sprintf("Php found in...%s\n", php))
-	return php, err
+	return phpPath, err
+}
+
+func (i Installer) download() (*grab.Response, error) {
+	resp, err := grab.Get(i.Destination + i.Version, i.Source+i.Version)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func whereIsGlobalPHP(phpExe string) (string, error) {

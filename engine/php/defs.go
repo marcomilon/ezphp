@@ -1,13 +1,18 @@
 package php
 
-import "io"
+import "github.com/marcomilon/ezphp/engine/ezio"
+
+type Installer struct {
+	Source      string
+	Destination string
+	Version     string
+}
 
 type EzInstaller interface {
-	Download(w io.Writer) error
-	Install(w io.Writer) error
-	WhereIs(w io.Writer) (string, error)
+	Install(w ezio.EzIO) error
+	WhereIs() (string, error)
 }
 
 type EzServe interface {
-	Serve(w io.Writer) error
+	Serve(w ezio.EzIO) error
 }
