@@ -33,11 +33,20 @@ func Clean() {
 
 	var ezIO ezio.EzIO = InOut{}
 
-	installer.WhereIs()
+	phpPath, err := installer.WhereIs()
+	if err != nil {
+		ezIO.Info("Installing...\n")
+		installer.Install(ezIO)
+	}
 
-	ezIO.Info("Installing...\n")
-	installer.Install(ezIO)
-	
+	ezIO.Info(fmt.Sprintf("php found ... %s\n", phpPath))
+
+	phpServer := php.Server{
+		phpPath,
+		"public_html",
+		80,
+	}
+
 	byebye(ezIO)
 }
 

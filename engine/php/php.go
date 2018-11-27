@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-func Run(php string, arg []string, stdout io.Writer, stderr io.Writer) error {
+func (s Server) Serve(stdout io.Writer, stderr io.Writer) error {
 	arguments := arg[1:]
 	cmd := exec.Command(php, arguments...)
 	cmd.Stdout = stdout

@@ -8,6 +8,12 @@ type Installer struct {
 	Version     string
 }
 
+type Server struct {
+	PhpPath      string
+	DocumentRoot string
+	Port         int
+}
+
 type EzInstaller interface {
 	Install(w ezio.EzIO) error
 	WhereIs() (string, error)

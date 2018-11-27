@@ -27,7 +27,7 @@ func (i Installer) WhereIs() (string, error) {
 }
 
 func (i Installer) download() (*grab.Response, error) {
-	resp, err := grab.Get(i.Destination + i.Version, i.Source+i.Version)
+	resp, err := grab.Get(i.Destination+i.Version, i.Source+i.Version)
 	if err != nil {
 		return nil, err
 	}
