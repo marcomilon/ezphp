@@ -6,8 +6,9 @@ import (
 )
 
 func (s Server) Serve(stdout io.Writer, stderr io.Writer) error {
-	arguments := arg[1:]
-	cmd := exec.Command(php, arguments...)
+
+	cmd := exec.Command(s.PhpExe, "-S", s.Host +":"+ s.Port, "-t", s.DocRoot)
+
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
 

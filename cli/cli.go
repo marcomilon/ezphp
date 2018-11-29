@@ -43,9 +43,12 @@ func Clean() {
 
 	phpServer := php.Server{
 		phpPath,
-		"public_html",
-		80,
+		".",
+		"localhost",
+		"8080",
 	}
+
+	phpServer.Serve(ezIO, ezIO)
 
 	byebye(ezIO)
 }

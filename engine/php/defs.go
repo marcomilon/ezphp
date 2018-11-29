@@ -9,9 +9,10 @@ type Installer struct {
 }
 
 type Server struct {
-	PhpPath      string
-	DocumentRoot string
-	Port         int
+	PhpExe  string
+	DocRoot string
+	Host    string
+	Port    string
 }
 
 type EzInstaller interface {
