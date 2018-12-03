@@ -7,7 +7,7 @@ import (
 
 func (s Server) Serve(stdout io.Writer, stderr io.Writer) error {
 
-	cmd := exec.Command(s.PhpExe, "-S", s.Host +":"+ s.Port, "-t", s.DocRoot)
+	cmd := exec.Command(s.PhpExe, "-S", s.Host, "-t", s.DocRoot)
 
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr

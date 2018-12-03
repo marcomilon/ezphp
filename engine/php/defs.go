@@ -3,21 +3,25 @@ package php
 import "github.com/marcomilon/ezphp/engine/ezio"
 
 type Installer struct {
-	Source      string
-	Destination string
-	Version     string
+	DownloadUrl string
+	Filename    string
+	InstallDir  string
 }
 
 type Server struct {
 	PhpExe  string
-	DocRoot string
 	Host    string
-	Port    string
+	DocRoot string
+}
+
+type Arguments struct {
+	Host       string
+	DocRoot    string
+	InstallDir string
 }
 
 type EzInstaller interface {
 	Install(w ezio.EzIO) error
-	WhereIs() (string, error)
 }
 
 type EzServe interface {

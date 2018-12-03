@@ -5,15 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 
+	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/engine/ezio"
+	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
 )
 
 const (
-	downloadUrl  = "https://windows.php.net/downloads/releases/archives/"
-	version      = "php-7.0.0-Win32-VC14-x64.zip"
-	destination  = "php-7.0.0/"
+	downloadUrl  = "https://windows.php.net/downloads/releases/archives"
+	fileName     = "php-7.0.0-Win32-VC14-x64.zip"
 	ezPHPVersion = "1.1.0"
 	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
 )
@@ -23,29 +25,31 @@ type serveArguments struct {
 	documentRoot string
 }
 
-func Clean() {
-
-	var installer php.EzInstaller = php.Installer{
-		downloadUrl,
-		destination,
-		version,
-	}
+func Clean(args ezargs.Arguments) {
 
 	var ezIO ezio.EzIO = InOut{}
 
-	phpPath, err := installer.WhereIs()
+	var installer php.EzInstaller = php.Installer{
+		downloadUrl,
+		fileName,
+		args.InstallDir,
+	}
+
+	phpPath, err := fs.WhereIsPHP(args.InstallDir)
 	if err != nil {
-		ezIO.Info("Installing...\n")
+		phpAbsPath, _ := filepath.Abs(args.InstallDir)
+		ezIO.Info("Installing PHP v7.0.0 in directory: " + phpAbsPath + "\n")
 		installer.Install(ezIO)
 	}
 
 	ezIO.Info(fmt.Sprintf("php found ... %s\n", phpPath))
 
+	fs.CreateDirIfNotExist(args.DocRoot)
+
 	phpServer := php.Server{
 		phpPath,
-		".",
-		"localhost",
-		"8080",
+		args.Host,
+		args.DocRoot,
 	}
 
 	phpServer.Serve(ezIO, ezIO)
