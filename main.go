@@ -7,11 +7,6 @@ import (
 	"github.com/marcomilon/ezphp/engine/ezargs"
 )
 
-const (
-	ezPHPVersion = "1.1.0"
-	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
-)
-
 func main() {
 
 	host := flag.String("S", "localhost:8080", "<addr>:<port> - Run with built-in web server.")
@@ -26,5 +21,5 @@ func main() {
 		*installDir,
 	}
 
-	cli.Clean(ezargs)
+	cli.Start(ezargs)
 }

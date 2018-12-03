@@ -3,3 +3,5 @@ ezphp.exe
 installer.exe
 server.exe
 dist
+localPHP
+public_html

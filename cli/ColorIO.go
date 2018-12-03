@@ -9,11 +9,11 @@ import (
 	"github.com/fatih/color"
 )
 
+type ColorIO struct{}
+
 const DATE_FORMAT = "Mon Jan _2 15:04:05 2006"
 
-type InOut struct{}
-
-func (InOut) Write(b []byte) (int, error) {
+func (ColorIO) Write(b []byte) (int, error) {
 	s := string(b[0:])
 	log := strings.TrimSpace(s)
 
@@ -32,25 +32,25 @@ func (InOut) Write(b []byte) (int, error) {
 	return len(b), nil
 }
 
-func (InOut) Info(s string) {
+func (ColorIO) Info(s string) {
 	green := color.New(color.FgGreen)
 	green.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
 	fmt.Print(s)
 }
 
-func (InOut) Error(s string) {
+func (ColorIO) Error(s string) {
 	red := color.New(color.FgRed)
 	red.Printf("[%s] ", time.Now().Format(DATE_FORMAT))
 	fmt.Print(s)
 }
 
-func (InOut) Custom(tag string, s string) {
+func (ColorIO) Custom(tag string, s string) {
 	red := color.New(color.FgYellow)
 	red.Printf("[%-24s] ", tag)
 	fmt.Print(s)
 }
 
-func (io InOut) Confirm(question string) bool {
+func (io ColorIO) Confirm(question string) bool {
 
 	var confirmation string
 
