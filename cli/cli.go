@@ -38,7 +38,7 @@ func Clean(args ezargs.Arguments) {
 	phpPath, err := fs.WhereIsPHP(args.InstallDir)
 	if err != nil {
 		phpAbsPath, _ := filepath.Abs(args.InstallDir)
-		ezIO.Info("Installing PHP v7.0.0 in directory: " + phpAbsPath + "\n")
+		ezIO.Info("Installing PHP v7.0.0 in local directory: " + phpAbsPath + "\n")
 		installer.Install(ezIO)
 	}
 
