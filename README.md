@@ -18,7 +18,7 @@ Advanced user execute `ezphp.exe -h` to view all options.
 After launching ezphp.exe you will get a PHP web server on port 8080. 
 To start programming with PHP just copy your PHP files to the **Document root** directory and then open the url **http://localhost:8080** on your web browser.
 
-### Why i create EzPHP?
+### Why i created EzPHP?
 
 XAMP or equivalent environments are difficult to set up for users who are learning to code. With EzPHP you have a development environment with just one click.
 EzPHP is available only for windows.
@@ -26,7 +26,7 @@ EzPHP is available only for windows.
 ### Requirements
 
 PHP binaries required to have *Visual C++ Redistributable for Visual Studio 2017* installed on your computer.
-You may have installed in your PC. In case you need it you can download it from https://www.microsoft.com/en-us/download/details.aspx?id=48145
+In case you need it you can download it from https://www.microsoft.com/en-us/download/details.aspx?id=48145
 
 ### Can i use EzPHP on command line (e.g. PowerShell)?
 
