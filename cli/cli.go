@@ -45,6 +45,8 @@ func Start(args ezargs.Arguments) {
 	ezIO.Info("EzPHP v" + php.EzPHPVersion + "\n")
 	ezIO.Info("Website: " + php.EzPHPWebsite + "\n")
 	ezIO.Info("PHP version: " + php.PHPVersion + "\n")
+	absDoctRoot, _ := filepath.Abs(args.DocRoot)
+	ezIO.Info("Your web server document root is: " + absDoctRoot + "\n")
 	ezIO.Info("\n")
 
 	phpPath, err = fs.WhereIsPHP(args.InstallDir)
@@ -56,6 +58,9 @@ func Start(args ezargs.Arguments) {
 		if ezIO.Confirm("Would you like to install PHP locally?") {
 
 			ezIO.Info("Installing PHP v7.0.0 in your local directory: " + localPHP + "\n")
+			ezIO.Info("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
+			ezIO.Info("File size is ~24MB\n")
+			ezIO.Info("This may take a while\n")
 			ezIO.Info("Please wait ... ")
 			err = installer.Install(ezIO)
 
