@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -47,12 +48,21 @@ func Start(args ezargs.Arguments) {
 
 	phpPath, err = fs.WhereIsPHP(args.InstallDir)
 	if err != nil {
+		log.Println("PHP not founded")
+
 		localPHP, _ := filepath.Abs(args.InstallDir)
-		ezIO.Info("Installing PHP v7.0.0 in local directory: " + localPHP + "\n")
-		ezIO.Info("Please wait ... ")
-		err = installer.Install(ezIO)
-		phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
-		ezIO.Info("\nPHP Installed succefully\n")
+
+		if ezIO.Confirm("Would you like to install PHP locally?") {
+
+			ezIO.Info("Installing PHP v7.0.0 in your local directory: " + localPHP + "\n")
+			ezIO.Info("Please wait ... ")
+			err = installer.Install(ezIO)
+			phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
+			ezIO.Info("\nPHP Installed succefully\n")
+
+		} else {
+			byebye(ezIO)
+		}
 	}
 
 	fs.CreateDirIfNotExist(args.DocRoot)
@@ -72,6 +82,7 @@ func Start(args ezargs.Arguments) {
 
 	phpServer.Serve(ezIO, ezIO)
 
+	ezIO.Info("Failed to start webserver\n")
 	byebye(ezIO)
 }
 

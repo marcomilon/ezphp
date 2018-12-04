@@ -7,7 +7,7 @@ import (
 )
 
 func (s Server) Serve(stdout io.Writer, stderr io.Writer) error {
-	log.Println("Starting webserver using " + s.PhpExe + "-S" + s.Host + "-t" + s.DocRoot)
+	log.Println("Starting webserver using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
 	cmd := exec.Command(s.PhpExe, "-S", s.Host, "-t", s.DocRoot)
 

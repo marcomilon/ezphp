@@ -31,7 +31,7 @@ func (io WhiteIO) Confirm(question string) bool {
 	var confirmation string
 
 	io.Info(fmt.Sprintf("%s [y/N]? ", question))
-	fmt.Scan(&confirmation)
+	fmt.Scanln(&confirmation)
 
 	confirmation = strings.TrimSpace(confirmation)
 	confirmation = strings.ToLower(confirmation)

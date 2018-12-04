@@ -28,8 +28,6 @@ func WhereIsPHP(installDir string) (string, error) {
 		phpPath, err = whereIsLocalPHP(php.PHP_EXECUTABLE, installDir)
 	}
 
-	log.Println("PHP founded in " + phpPath)
-
 	return phpPath, err
 }
 

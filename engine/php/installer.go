@@ -27,7 +27,7 @@ func (i Installer) download() (*grab.Response, error) {
 }
 
 func (i Installer) unzip() error {
-	log.Println("Unziping PHP file "+i.InstallDir+string(os.PathSeparator)+i.Filename, i.InstallDir)
+	log.Println("Unziping local PHP installation: " + i.InstallDir + string(os.PathSeparator) + i.Filename)
 	archiver.Unarchive(i.InstallDir+string(os.PathSeparator)+i.Filename, i.InstallDir)
 
 	return nil
