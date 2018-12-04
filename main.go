@@ -2,12 +2,15 @@ package main
 
 import (
 	"flag"
+	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/marcomilon/ezphp/cli"
 	"github.com/marcomilon/ezphp/engine/ezargs"
 )
+
+var DEBUG = "YES"
 
 func main() {
 
@@ -25,15 +28,24 @@ func main() {
 		*about,
 	}
 
-	file, err := os.OpenFile("debug.log", os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
+	if DEBUG == "YES" {
 
-	log.SetOutput(file)
+		file, err := os.OpenFile("debug.log", os.O_CREATE|os.O_WRONLY, 0644)
+
+		if err != nil {
+			log.Println("Unable to start EzPHP")
+			log.Fatal(err)
+		}
+
+		defer file.Close()
+		log.SetOutput(file)
+
+	} else {
+
+		log.SetOutput(ioutil.Discard)
+
+	}
 
 	cli.Start(ezargs)
 
-	return
 }

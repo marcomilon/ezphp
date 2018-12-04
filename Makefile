@@ -26,9 +26,9 @@ format:
 	goimports -w -d $(GOFILES)
 	
 build-linux: clean
-	$(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)
+	$(GOBUILD) -ldflags "-X main.DEBUG=NO" -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)
 	
 build-win: format clean setup
-	GOOS=windows GOARCH=386 $(GOBUILD) -ldflags "-s -w" -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)$(BINARY_WIN)
+	GOOS=windows GOARCH=386 $(GOBUILD) -ldflags "-X main.DEBUG=NO -s -w" -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)$(BINARY_WIN)
 	
 release: build-win
