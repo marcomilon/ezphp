@@ -44,6 +44,7 @@ func Start(args ezargs.Arguments) {
 
 	ezIO.Info("EzPHP v" + php.EzPHPVersion + "\n")
 	ezIO.Info("Website: " + php.EzPHPWebsite + "\n")
+	ezIO.Info("PHP version: " + php.PHPVersion + "\n")
 	ezIO.Info("\n")
 
 	phpPath, err = fs.WhereIsPHP(args.InstallDir)
@@ -57,6 +58,12 @@ func Start(args ezargs.Arguments) {
 			ezIO.Info("Installing PHP v7.0.0 in your local directory: " + localPHP + "\n")
 			ezIO.Info("Please wait ... ")
 			err = installer.Install(ezIO)
+
+			if err != nil {
+				ezIO.Error("\nFailed to install PHP: " + err.Error() + "\n")
+				byebye(ezIO)
+			}
+
 			phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
 			ezIO.Info("\nPHP Installed succefully\n")
 
@@ -80,9 +87,12 @@ func Start(args ezargs.Arguments) {
 		args.DocRoot,
 	}
 
-	phpServer.Serve(ezIO, ezIO)
+	err = phpServer.Serve(ezIO, ezIO)
+	if err != nil {
+		ezIO.Error(err.Error() + "\n")
+	}
 
-	ezIO.Info("Failed to start webserver\n")
+	ezIO.Info("Failed to start web server. See error above ^\n")
 	byebye(ezIO)
 }
 

@@ -10,8 +10,19 @@ import (
 )
 
 func (i Installer) Install(w ezio.EzIO) error {
-	i.download()
-	i.unzip()
+
+	var err error
+
+	_, err = i.download()
+	if err != nil {
+		return err
+	}
+
+	err = i.unzip()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -28,7 +39,10 @@ func (i Installer) download() (*grab.Response, error) {
 
 func (i Installer) unzip() error {
 	log.Println("Unziping local PHP installation: " + i.InstallDir + string(os.PathSeparator) + i.Filename)
-	archiver.Unarchive(i.InstallDir+string(os.PathSeparator)+i.Filename, i.InstallDir)
+	err := archiver.Unarchive(i.InstallDir+string(os.PathSeparator)+i.Filename, i.InstallDir)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
