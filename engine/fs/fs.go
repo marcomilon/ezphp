@@ -24,7 +24,7 @@ func CreateDirIfNotExist(dir string) error {
 
 func createDefaultIndex(basePath string) {
 	log.Println("Creating default index.php in directory: " + basePath)
-	
+
 	file, err := os.Create(basePath + string(os.PathSeparator) + "index.php")
 	if err != nil {
 		log.Println("Cannot create default index.php:  " + err.Error())
@@ -35,7 +35,8 @@ func createDefaultIndex(basePath string) {
 
 	fmt.Fprintf(file, "<?php\n")
 	fmt.Fprintf(file, "\n")
-	fmt.Fprintf(file, "echo \"Welcome to your personal web server.<br>Replace this file with your own index.php\";")
+	fmt.Fprintf(file, "echo \"Welcome to your personal web server.<br>Replace this file with your own index.php.<br>\";\n")
+	fmt.Fprintf(file, "echo \"This file is located in directory: " + basePath + "\";\n")
 	fmt.Fprintf(file, "\n")
 }
 
