@@ -5,3 +5,4 @@ server.exe
 dist
 localPHP
 public_html
+debug.log

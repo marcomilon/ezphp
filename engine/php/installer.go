@@ -1,6 +1,7 @@
 package php
 
 import (
+	"log"
 	"os"
 
 	"github.com/cavaliercoder/grab"
@@ -15,8 +16,10 @@ func (i Installer) Install(w ezio.EzIO) error {
 }
 
 func (i Installer) download() (*grab.Response, error) {
+	log.Println("Downloading PHP from " + i.DownloadUrl + "/" + i.Filename)
 	resp, err := grab.Get(i.InstallDir+string(os.PathSeparator)+i.Filename, i.DownloadUrl+"/"+i.Filename)
 	if err != nil {
+		log.Println("Failed to download PHP: " + err.Error())
 		return nil, err
 	}
 
@@ -24,6 +27,7 @@ func (i Installer) download() (*grab.Response, error) {
 }
 
 func (i Installer) unzip() error {
+	log.Println("Unziping PHP file "+i.InstallDir+string(os.PathSeparator)+i.Filename, i.InstallDir)
 	archiver.Unarchive(i.InstallDir+string(os.PathSeparator)+i.Filename, i.InstallDir)
 
 	return nil

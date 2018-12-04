@@ -29,8 +29,8 @@ func Start(args ezargs.Arguments) {
 	var ezIO ezio.EzIO = WhiteIO{}
 	var phpPath string
 	var err error
-	
-	if(args.About) {
+
+	if args.About {
 		about()
 		os.Exit(0)
 	}

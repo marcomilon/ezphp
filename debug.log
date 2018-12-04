@@ -1,0 +1,5 @@
+2018/12/03 21:07:56 Searching for PHP in $PATH
+2018/12/03 21:07:56 Searching for PHP in /Users/ap/go/src/github.com/marcomilon/ezphp/localPHP/php.exe
+2018/12/03 21:07:56 PHP founded in /Users/ap/go/src/github.com/marcomilon/ezphp/localPHP/php.exe
+2018/12/03 21:07:56 Starting webserver using /Users/ap/go/src/github.com/marcomilon/ezphp/localPHP/php.exe-Slocalhost:8080-tpublic_html
+2018/12/03 21:07:56 Failed to start webserver: fork/exec /Users/ap/go/src/github.com/marcomilon/ezphp/localPHP/php.exe: permission denied

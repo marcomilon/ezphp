@@ -25,15 +25,13 @@ func main() {
 		*about,
 	}
 
-	file, err := os.OpenFile("debug.log", os.O_CREATE|os.O_APPEND, 0644)
+	file, err := os.OpenFile("debug.log", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
 	log.SetOutput(file)
-
-	log.Println("check to make sure it works")
 
 	cli.Start(ezargs)
 
