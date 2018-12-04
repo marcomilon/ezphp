@@ -1,7 +1,0 @@
-2018/12/03 21:34:20 Searching for PHP in $PATH
-2018/12/03 21:34:20 Searching for PHP in /Users/ap/go/src/github.com/marcomilon/ezphp/localPHP/php.exe
-2018/12/03 21:34:20 PHP not founded
-2018/12/03 21:34:21 Downloading PHP from https://windows.php.net/downloads/releases/archives/php-7.0.0-Win32-VC14-x64.zip
-2018/12/03 21:31:17 Unziping local PHP installation: localPHP/php-7.0.0-Win32-VC14-x64.zip
-2018/12/03 21:31:18 Starting webserver using /Users/ap/go/src/github.com/marcomilon/ezphp/localPHP/php.exe -S localhost:8080 -t public_html
-2018/12/03 21:31:18 Failed to start webserver: fork/exec /Users/ap/go/src/github.com/marcomilon/ezphp/localPHP/php.exe: permission denied
