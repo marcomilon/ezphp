@@ -6,7 +6,7 @@ EzPHP is an alternative to Xamp/Wamp. EzPHP is the easiest way to setup a PHP de
 
 ### Installation
 
-1. Download [ezphp.zip](https://github.com/marcomilon/ezphp/releases/download/1.1.1/ezphp.exe).
+1. Download [ezphp.exe](https://github.com/marcomilon/ezphp/releases/download/1.1.1/ezphp.exe).
 2. Create a new folder for your project and copy ezphp.exe.
 3. Run ezphp.exe. If PHP is not installed locally ezphp will try to download and install PHP.
 4. Open your browser in http://localhost:8080. 
