@@ -29,6 +29,11 @@ func Start(args ezargs.Arguments) {
 	var ezIO ezio.EzIO = WhiteIO{}
 	var phpPath string
 	var err error
+	
+	if(args.About) {
+		about()
+		os.Exit(0)
+	}
 
 	var installer php.EzInstaller = php.Installer{
 		downloadUrl,
@@ -36,9 +41,8 @@ func Start(args ezargs.Arguments) {
 		args.InstallDir,
 	}
 
-	ezIO.Info("EzPHP\n")
-	ezIO.Info("website: " + ezargs.EzPHPWebsite + "\n")
-	ezIO.Info("version: " + ezargs.EzPHPVersion + "\n")
+	ezIO.Info("EzPHP v" + php.EzPHPVersion + "\n")
+	ezIO.Info("Website: " + php.EzPHPWebsite + "\n")
 	ezIO.Info("\n")
 
 	phpPath, err = fs.WhereIsPHP(args.InstallDir)
@@ -85,6 +89,6 @@ func about() {
 	fmt.Println("| |____ / /| |    | |  | | |     ")
 	fmt.Println("|______/___|_|    |_|  |_|_|     ")
 	fmt.Println("")
-	fmt.Printf("website: %s\n", ezargs.EzPHPWebsite)
-	fmt.Printf("version: %s\n", ezargs.EzPHPVersion)
+	fmt.Printf("website: %s\n", php.EzPHPWebsite)
+	fmt.Printf("version: %s\n", php.EzPHPVersion)
 }

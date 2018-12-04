@@ -2,6 +2,11 @@ package php
 
 import "github.com/marcomilon/ezphp/engine/ezio"
 
+const (
+	EzPHPVersion = "1.1.0"
+	EzPHPWebsite = "https://github.com/marcomilon/ezphp"
+)
+
 type Installer struct {
 	DownloadUrl string
 	Filename    string
