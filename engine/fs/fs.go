@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -15,8 +16,27 @@ func CreateDirIfNotExist(dir string) error {
 		if err != nil {
 			return err
 		}
+
+		createDefaultIndex(dir)
 	}
 	return nil
+}
+
+func createDefaultIndex(basePath string) {
+	log.Println("Creating default index.php in directory: " + basePath)
+	
+	file, err := os.Create(basePath + string(os.PathSeparator) + "index.php")
+	if err != nil {
+		log.Println("Cannot create default index.php:  " + err.Error())
+		return
+	}
+
+	defer file.Close()
+
+	fmt.Fprintf(file, "<?php\n")
+	fmt.Fprintf(file, "\n")
+	fmt.Fprintf(file, "echo \"Welcome to your personal web server.<br>Replace this file with your own index.php\";")
+	fmt.Fprintf(file, "\n")
 }
 
 func WhereIsPHP(installDir string) (string, error) {

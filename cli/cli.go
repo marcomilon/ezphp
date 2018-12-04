@@ -70,7 +70,7 @@ func Start(args ezargs.Arguments) {
 			}
 
 			phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
-			ezIO.Info("\nPHP Installed succefully\n")
+			ezIO.Info("\nPHP Installed succefully\n\n")
 
 		} else {
 			byebye(ezIO)
@@ -81,6 +81,8 @@ func Start(args ezargs.Arguments) {
 
 	localDocRoot, _ := filepath.Abs(args.DocRoot)
 
+	ezIO.Info("Information\n")
+	ezIO.Info("-----------\n")
 	ezIO.Info("Copy for PHP file in the directory: " + localDocRoot + "\n")
 	ezIO.Info("Open your browser to http://" + args.Host + "\n")
 	ezIO.Info("Web server is running...\n")
