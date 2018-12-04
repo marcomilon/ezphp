@@ -7,10 +7,10 @@ GOCLEAN=$(GOCMD) clean
 APP_NAME=main
 BINARY_WIN=.exe
 
-BUILDDIR=dist
+BUILDDIR=ezphp
 
 RELEASE_NAME=ezphp
-RELEASEDIR=$(BUILDDIR)/$(RELEASE_NAME)
+RELEASEDIR=$(BUILDDIR)
 RELEASEFILE=$(RELEASE_NAME).zip
 
 all: release
@@ -30,5 +30,6 @@ build-linux: clean
 	
 build-win: format clean setup
 	GOOS=windows GOARCH=386 $(GOBUILD) -ldflags "-X main.DEBUG=NO -s -w" -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)$(BINARY_WIN)
+	##zip -r $(RELEASEDIR)/$(RELEASEFILE) $(BUILDDIR)
 	
 release: build-win

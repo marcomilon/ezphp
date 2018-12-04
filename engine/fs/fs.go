@@ -36,7 +36,7 @@ func createDefaultIndex(basePath string) {
 	fmt.Fprintf(file, "<?php\n")
 	fmt.Fprintf(file, "\n")
 	fmt.Fprintf(file, "echo \"Welcome to your personal web server.<br>Replace this file with your own index.php.<br>\";\n")
-	fmt.Fprintf(file, "echo \"This file is located in directory: " + basePath + "\";\n")
+	fmt.Fprintf(file, "echo \"This file is located in directory: "+basePath+"\";\n")
 	fmt.Fprintf(file, "\n")
 }
 
