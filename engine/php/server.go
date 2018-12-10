@@ -2,12 +2,13 @@ package php
 
 import (
 	"io"
-	"log"
 	"os/exec"
+
+	"github.com/sirupsen/logrus"
 )
 
 func (s Server) Serve(stdout io.Writer, stderr io.Writer) error {
-	log.Println("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
+	logrus.Info("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
 	cmd := exec.Command(s.PhpExe, "-S", s.Host, "-t", s.DocRoot)
 
@@ -17,7 +18,7 @@ func (s Server) Serve(stdout io.Writer, stderr io.Writer) error {
 	err := cmd.Run()
 
 	if err != nil {
-		log.Println("Failed to start web server: " + err.Error())
+		logrus.Error("Failed to start web server: " + err.Error())
 		return err
 	}
 

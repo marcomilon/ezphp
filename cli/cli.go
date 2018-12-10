@@ -3,7 +3,6 @@ package cli
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/marcomilon/ezphp/engine/ezio"
 	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -51,7 +51,7 @@ func Start(args ezargs.Arguments) {
 
 	phpPath, err = fs.WhereIsPHP(args.InstallDir)
 	if err != nil {
-		log.Println("PHP not founded")
+		logrus.Info("PHP not founded")
 
 		localPHP, _ := filepath.Abs(args.InstallDir)
 

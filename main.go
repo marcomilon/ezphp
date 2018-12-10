@@ -2,15 +2,29 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/marcomilon/ezphp/cli"
 	"github.com/marcomilon/ezphp/engine/ezargs"
+	"github.com/sirupsen/logrus"
 )
 
 var DEBUG = "YES"
+
+func init() {
+
+	file, err := os.OpenFile("ezphp.log", os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		log.Println("Unable to start EzPHP")
+		log.Fatal(err)
+	}
+
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetOutput(os.Stdout)
+	logrus.SetOutput(file)
+}
 
 func main() {
 
@@ -26,24 +40,6 @@ func main() {
 		*docRoot,
 		*installDir,
 		*about,
-	}
-
-	if DEBUG == "YES" {
-
-		file, err := os.OpenFile("debug.log", os.O_CREATE|os.O_WRONLY, 0644)
-
-		if err != nil {
-			log.Println("Unable to start EzPHP")
-			log.Fatal(err)
-		}
-
-		defer file.Close()
-		log.SetOutput(file)
-
-	} else {
-
-		log.SetOutput(ioutil.Discard)
-
 	}
 
 	cli.Start(ezargs)
