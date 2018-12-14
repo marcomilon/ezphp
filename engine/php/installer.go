@@ -1,7 +1,9 @@
 package php
 
 import (
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/marcomilon/ezphp/engine/ezio"
@@ -45,4 +47,14 @@ func (i Installer) unzip() error {
 	}
 
 	return nil
+}
+
+func spinner(delay time.Duration) {
+	StopSpinner := false
+	for !StopSpinner {
+		for _, r := range `-\|/` {
+			fmt.Printf("\r%c", r)
+			time.Sleep(delay)
+		}
+	}
 }
