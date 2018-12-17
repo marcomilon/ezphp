@@ -1,7 +1,6 @@
 package php
 
 import (
-	"fmt"
 	"os"
 	"time"
 
@@ -14,6 +13,14 @@ import (
 func (i Installer) Install(w ezio.EzIO) error {
 
 	var err error
+
+	delay := 100 * time.Millisecond
+	quit := make(chan int)
+	defer func() {
+		quit <- 0
+	}()
+
+	go ezio.Spinner(delay, quit)
 
 	_, err = i.download()
 	if err != nil {
@@ -47,14 +54,4 @@ func (i Installer) unzip() error {
 	}
 
 	return nil
-}
-
-func spinner(delay time.Duration) {
-	StopSpinner := false
-	for !StopSpinner {
-		for _, r := range `-\|/` {
-			fmt.Printf("\r%c", r)
-			time.Sleep(delay)
-		}
-	}
 }
