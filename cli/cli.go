@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/engine/ezio"
@@ -61,12 +62,20 @@ func Start(args ezargs.Arguments) {
 			ezIO.Info("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
 			ezIO.Info("File size is ~24MB\n")
 			ezIO.Info("This may take a while\n")
+			delay := 90 * time.Millisecond
+
+			stopSpinner := make(chan int)
+			go ezio.Spinner(delay, stopSpinner)
+
 			err = installer.Install(ezIO)
 
 			if err != nil {
+				stopSpinner <- 0
 				ezIO.Error("\nFailed to install PHP: " + err.Error() + "\n")
 				byebye(ezIO)
 			}
+
+			stopSpinner <- 0
 
 			phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
 			ezIO.Info("\nPHP Installed succefully\n\n")

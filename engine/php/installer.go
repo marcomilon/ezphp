@@ -2,7 +2,6 @@ package php
 
 import (
 	"os"
-	"time"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/marcomilon/ezphp/engine/ezio"
@@ -13,14 +12,6 @@ import (
 func (i Installer) Install(w ezio.EzIO) error {
 
 	var err error
-
-	delay := 100 * time.Millisecond
-	quit := make(chan int)
-	defer func() {
-		quit <- 0
-	}()
-
-	go ezio.Spinner(delay, quit)
 
 	_, err = i.download()
 	if err != nil {

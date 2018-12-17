@@ -5,16 +5,16 @@ import (
 	"time"
 )
 
-func Spinner(delay time.Duration, quit chan int) {
+func Spinner(delay time.Duration, stopSpinner chan int) {
 	for {
 		select {
 		default:
 			for _, r := range `-\|/` {
-				fmt.Printf("\rPlease wait %c", r)
+				fmt.Printf("\rPlease wait: %c", r)
 				time.Sleep(delay)
 			}
-		case <-quit:
-			fmt.Printf("\r")
+		case <-stopSpinner:
+			fmt.Printf("\r\rPlease wait: download complete")
 			return
 
 		}
