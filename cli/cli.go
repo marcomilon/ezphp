@@ -61,7 +61,6 @@ func Start(args ezargs.Arguments) {
 			ezIO.Info("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
 			ezIO.Info("File size is ~24MB\n")
 			ezIO.Info("This may take a while\n")
-			ezIO.Info("Please wait ... ")
 			err = installer.Install(ezIO)
 
 			if err != nil {
