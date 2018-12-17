@@ -6,3 +6,4 @@ dist
 localPHP
 public_html
 ezphp.log
+vendor
