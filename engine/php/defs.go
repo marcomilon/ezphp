@@ -12,6 +12,9 @@ type Installer struct {
 	DownloadUrl string
 	Filename    string
 	InstallDir  string
+	Outmsg      chan string
+	Errmsg      chan string
+	Done        chan bool
 }
 
 type Server struct {
@@ -27,7 +30,7 @@ type Arguments struct {
 }
 
 type EzInstaller interface {
-	Install(w ezio.EzIO) error
+	Install()
 }
 
 type EzServe interface {

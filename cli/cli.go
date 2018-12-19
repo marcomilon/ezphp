@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/engine/ezio"
@@ -37,10 +36,13 @@ func Start(args ezargs.Arguments) {
 		os.Exit(0)
 	}
 
-	var installer php.EzInstaller = php.Installer{
+	installer := &php.Installer{
 		downloadUrl,
 		fileName,
 		args.InstallDir,
+		make(chan string),
+		make(chan string),
+		make(chan bool),
 	}
 
 	ezIO.Info("EzPHP v" + php.EzPHPVersion + "\n")
@@ -62,20 +64,24 @@ func Start(args ezargs.Arguments) {
 			ezIO.Info("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
 			ezIO.Info("File size is ~24MB\n")
 			ezIO.Info("This may take a while\n")
-			delay := 90 * time.Millisecond
 
-			stopSpinner := make(chan int)
-			go ezio.Spinner(delay, stopSpinner)
+			go installer.Install()
 
-			err = installer.Install(ezIO)
+		Progress:
+			for {
+				select {
+				case outmsg := <-installer.Outmsg:
+					ezIO.Info(fmt.Sprintf("\rDownload in progress: %s", outmsg))
+				case errMsg := <-installer.Errmsg:
+					ezIO.Error("\nFailed to install PHP: " + errMsg + "\n")
+					byebye(ezIO)
 
-			if err != nil {
-				stopSpinner <- 0
-				ezIO.Error("\nFailed to install PHP: " + err.Error() + "\n")
-				byebye(ezIO)
+				case <-installer.Done:
+					break Progress
+				}
 			}
 
-			stopSpinner <- 0
+			ezIO.Info("\nDownload Finish")
 
 			phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
 			ezIO.Info("\nPHP Installed succefully\n\n")
@@ -94,7 +100,7 @@ func Start(args ezargs.Arguments) {
 	ezIO.Info("Copy for PHP file in the directory: " + localDocRoot + "\n")
 	ezIO.Info("Open your browser to http://" + args.Host + "\n")
 	ezIO.Info("Web server is running ...\n")
-	ezIO.Info("Press CTRL+C to exit\n")
+	ezIO.Info("Press CTRL+C to exit\n\n")
 
 	phpServer := php.Server{
 		phpPath,
