@@ -13,19 +13,23 @@ import (
 func (i *Installer) Install() {
 
 	var err error
+	defer func() {
+		i.Done <- true
+	}()
 
 	_, err = i.download()
 	if err != nil {
+		logrus.Error("Error downloading file " + err.Error())
 		i.Errmsg <- err.Error()
 		return
 	}
 
 	err = i.unzip()
 	if err != nil {
-
+		logrus.Error("Error unzipping file " + err.Error())
+		i.Errmsg <- err.Error()
+		return
 	}
-
-	i.Done <- true
 
 }
 
@@ -41,21 +45,15 @@ Loop:
 	for {
 		select {
 		case <-t.C:
-			// fmt.Printf("  transferred %v / %v bytes (%.2f%%)\n",
-			// 	resp.BytesComplete(),
-			// 	resp.Size,
-			// 	100*resp.Progress())
 			i.Outmsg <- fmt.Sprintf("%.2f%%", 100*resp.Progress())
 
 		case <-resp.Done:
-			// download is complete
 			break Loop
 		}
 
 	}
 
 	if err := resp.Err(); err != nil {
-		logrus.Info("Download error")
 		return nil, resp.Err()
 	}
 
