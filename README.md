@@ -1,4 +1,10 @@
 ### EzPHP
+ ______     _____  _    _ _____ 
+|  ____|   |  __ \| |  | |  __ \
+| |__   ___| |__) | |__| | |__) |
+|  __| |_  /  ___/|  __  |  ___/
+| |____ / /| |    | |  | | |
+|______/___|_|    |_|  |_|_|
 
 EzPHP is an alternative to Xamp/Wamp. EzPHP is the easiest way to setup a PHP development environment for learning PHP programming on Windows.
 
