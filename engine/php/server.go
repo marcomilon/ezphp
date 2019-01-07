@@ -1,26 +1,43 @@
 package php
 
 import (
-	"io"
 	"os/exec"
 
 	"github.com/sirupsen/logrus"
 )
 
-func (s Server) Serve(stdout io.Writer, stderr io.Writer) error {
+type outMsg struct {
+	out chan string
+}
+
+type errMsg struct {
+	err chan string
+}
+
+func (o outMsg) Write(p []byte) (n int, err error) {
+	s := string(p[:n])
+	o.out <- s
+
+	return len(p), nil
+}
+
+func (e errMsg) Write(p []byte) (n int, err error) {
+	s := string(p[:n])
+	e.err <- s
+
+	return len(p), nil
+}
+
+func (s Server) Serve() {
 	logrus.Info("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
+
+	out := outMsg{out: s.Outmsg}
+	err := errMsg{err: s.Errmsg}
 
 	cmd := exec.Command(s.PhpExe, "-S", s.Host, "-t", s.DocRoot)
 
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
+	cmd.Stdout = out
+	cmd.Stderr = err
 
-	err := cmd.Run()
-
-	if err != nil {
-		logrus.Error("Failed to start web server: " + err.Error())
-		return err
-	}
-
-	return nil
+	cmd.Run()
 }

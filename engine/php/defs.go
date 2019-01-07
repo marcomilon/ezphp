@@ -8,19 +8,24 @@ const (
 	PHPVersion   = "7.0.0"
 )
 
+type Channels struct {
+	Outmsg chan string
+	Errmsg chan string
+	Done   chan bool
+}
+
 type Installer struct {
 	DownloadUrl string
 	Filename    string
 	InstallDir  string
-	Outmsg      chan string
-	Errmsg      chan string
-	Done        chan bool
+	Channels
 }
 
 type Server struct {
 	PhpExe  string
 	Host    string
 	DocRoot string
+	Channels
 }
 
 type Arguments struct {

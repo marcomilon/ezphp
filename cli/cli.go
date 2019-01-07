@@ -36,13 +36,17 @@ func Start(args ezargs.Arguments) {
 		os.Exit(0)
 	}
 
-	installer := &php.Installer{
-		downloadUrl,
-		fileName,
-		args.InstallDir,
+	channels := php.Channels{
 		make(chan string),
 		make(chan string),
 		make(chan bool),
+	}
+
+	installer := php.Installer{
+		downloadUrl,
+		fileName,
+		args.InstallDir,
+		channels,
 	}
 
 	ezIO.Info("EzPHP v" + php.EzPHPVersion + "\n")
@@ -103,11 +107,22 @@ func Start(args ezargs.Arguments) {
 		phpPath,
 		args.Host,
 		args.DocRoot,
+		channels,
 	}
 
-	err = phpServer.Serve(ezIO, ezIO)
-	if err != nil {
-		ezIO.Error(err.Error() + "\n")
+	go phpServer.Serve()
+Serve:
+	for {
+		select {
+		case outmsg := <-phpServer.Outmsg:
+			ezIO.Info(outmsg)
+		case errMsg := <-phpServer.Errmsg:
+			ezIO.Error(errMsg)
+			byebye(ezIO)
+
+		case <-installer.Done:
+			break Serve
+		}
 	}
 
 	ezIO.Info("Failed to start web server. See error above ^\n")
