@@ -62,8 +62,6 @@ func Start(args ezargs.Arguments) {
 
 			ezIO.Info("Installing PHP v7.0.0 in your local directory: " + localPHP + "\n")
 			ezIO.Info("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
-			ezIO.Info("File size is ~24MB\n")
-			ezIO.Info("This may take a while\n")
 
 			go installer.Install()
 
@@ -77,11 +75,10 @@ func Start(args ezargs.Arguments) {
 					byebye(ezIO)
 
 				case <-installer.Done:
+					ezIO.Info(fmt.Sprintf("\rDownload in progress: %s", "100%  "))
 					break Progress
 				}
 			}
-
-			ezIO.Info("\nDownload Finish")
 
 			phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
 			ezIO.Info("\nPHP Installed succefully\n\n")
