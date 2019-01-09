@@ -50,10 +50,7 @@ func Start(args ezargs.Arguments) {
 	}
 
 	ezIO.Info("EzPHP v" + php.EzPHPVersion + "\n")
-	ezIO.Info("Website: " + php.EzPHPWebsite + "\n")
-	ezIO.Info("PHP version: " + php.PHPVersion + "\n")
-	absDoctRoot, _ := filepath.Abs(args.DocRoot)
-	ezIO.Info("Your web server document root is: " + absDoctRoot + "\n")
+	ezIO.Info(php.EzPHPWebsite + "\n")
 	ezIO.Info("\n")
 
 	phpPath, err = fs.WhereIsPHP(args.InstallDir)
@@ -118,14 +115,12 @@ Serve:
 			ezIO.Info(outmsg)
 		case errMsg := <-phpServer.Errmsg:
 			ezIO.Error(errMsg)
-			byebye(ezIO)
-
 		case <-installer.Done:
+			fmt.Println("");
 			break Serve
 		}
 	}
-
-	ezIO.Info("Failed to start web server. See error above ^\n")
+	
 	byebye(ezIO)
 }
 

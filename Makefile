@@ -21,6 +21,8 @@ setup:
 clean:
 	$(GOCLEAN)
 	rm -rf $(RELEASE_NAME) $(BUILDDIR)
+	rm -rf public_html
+	rm -rf localPHP
 
 format:
 	goimports -w -d $(GOFILES)
