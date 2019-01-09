@@ -7,6 +7,7 @@ import (
 
 	"github.com/marcomilon/ezphp/cli"
 	"github.com/marcomilon/ezphp/engine/ezargs"
+	"github.com/marcomilon/ezphp/gui"
 	"github.com/sirupsen/logrus"
 )
 
@@ -31,6 +32,7 @@ func main() {
 	host := flag.String("S", "localhost:8080", "<addr>:<port> - Run with built-in web server.")
 	docRoot := flag.String("t", "public_html", "<docroot> - Specify document root <docroot> for built-in web server.")
 	installDir := flag.String("installDir", "localPHP", "<directory> - Installation directory for PHP.")
+	useGui := flag.Bool("gui", false, "Use gui interface.")
 	about := flag.Bool("about", false, "Display about information.")
 
 	flag.Parse()
@@ -40,8 +42,13 @@ func main() {
 		*docRoot,
 		*installDir,
 		*about,
+		*useGui,
 	}
 
-	cli.Start(ezargs)
+	if ezargs.Gui {
+		gui.Start()
+	} else {
+		cli.Start(ezargs)
+	}
 
 }

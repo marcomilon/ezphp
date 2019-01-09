@@ -5,4 +5,5 @@ type Arguments struct {
 	DocRoot    string
 	InstallDir string
 	About      bool
+	Gui        bool
 }
