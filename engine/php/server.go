@@ -39,7 +39,7 @@ func (s Server) Serve() {
 	cmd.Stderr = err
 
 	errCmd := cmd.Run()
-	
+
 	if errCmd != nil {
 		s.Errmsg <- errCmd.Error()
 		s.Done <- true

@@ -116,11 +116,11 @@ Serve:
 		case errMsg := <-phpServer.Errmsg:
 			ezIO.Error(errMsg)
 		case <-installer.Done:
-			fmt.Println("");
+			fmt.Println("")
 			break Serve
 		}
 	}
-	
+
 	byebye(ezIO)
 }
 

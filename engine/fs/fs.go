@@ -33,11 +33,37 @@ func createDefaultIndex(basePath string) {
 
 	defer file.Close()
 
-	fmt.Fprintf(file, "<?php\n")
-	fmt.Fprintf(file, "\n")
-	fmt.Fprintf(file, "echo \"Welcome to your personal web server.<br>Replace this file with your own index.php.<br>\";\n")
-	fmt.Fprintf(file, "echo \"This file is located in directory: "+basePath+"\";\n")
-	fmt.Fprintf(file, "\n")
+	absDoctRoot, _ := filepath.Abs(basePath)
+
+	template := `<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>EzPHP</title>
+  </head>
+  <body>
+	<div class="container">
+	<h1>Welcome to your personal web server</h1>
+		<p>
+		<?= "This file is located in: ` + absDoctRoot + `/index.php"; ?>
+		</p>
+		<?= "Replaced it with your own file"; ?>
+		<p>
+		<hr>
+		<p>
+		<?= "Php version: " . phpversion() ?>
+		<p>
+	</div>
+    </body>
+</html>`
+
+	fmt.Fprintf(file, template)
 }
 
 func WhereIsPHP(installDir string) (string, error) {
