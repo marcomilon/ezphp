@@ -46,9 +46,12 @@ func main() {
 	}
 
 	if ezargs.Gui {
-		gui.Start()
+		win, tv := gui.Start()
+		guiio := gui.GuiIO{Tv: tv}
+		go gui.Show(win)
+		cli.Start(ezargs, guiio)
 	} else {
-		cli.Start(ezargs)
+		//cli.Start(ezargs)
 	}
 
 }

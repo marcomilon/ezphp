@@ -5,66 +5,96 @@ import (
 	"log"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/sirupsen/logrus"
 )
 
-type Gui struct {
-	Builder *gtk.Builder
-	Tv      *gtk.TextView
-	Window  *gtk.Window
-}
-
-func (g *Gui) Write(b []byte) (n int, err error) {
-	s := string(b[0:])
-	buffer, err := g.Tv.GetBuffer()
-	buffer.InsertAtCursor(s)
-	return len(b), err
-}
-
-func (g *Gui) Show() {
-
-	g.Window.Connect("destroy", func() {
-		fmt.Println("Bye Bye")
+func setup_window(title string) *gtk.Window {
+	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	if err != nil {
+		log.Fatal("Unable to create window:", err)
+	}
+	win.SetTitle(title)
+	win.Connect("destroy", func() {
+		gtk.MainQuit()
 	})
-	g.Window.SetTitle("EzPHP")
-	g.Window.SetDefaultSize(800, 600)
-	g.Window.ShowAll()
-
-	gtk.Main()
+	win.SetDefaultSize(800, 600)
+	win.SetPosition(gtk.WIN_POS_CENTER)
+	return win
 }
 
-func NewGui() *Gui {
+func setup_box(orient gtk.Orientation) *gtk.Box {
+	box, err := gtk.BoxNew(orient, 0)
+	if err != nil {
+		log.Fatal("Unable to create box:", err)
+	}
+	return box
+}
 
+func setup_tview() *gtk.TextView {
+	tv, err := gtk.TextViewNew()
+	if err != nil {
+		log.Fatal("Unable to create TextView:", err)
+	}
+	return tv
+}
+
+func setup_btn(label string, onClick func()) *gtk.Button {
+	btn, err := gtk.ButtonNewWithLabel(label)
+	if err != nil {
+		log.Fatal("Unable to create button:", err)
+	}
+	btn.Connect("clicked", onClick)
+	return btn
+}
+
+// func get_buffer_from_tview(tv *gtk.TextView) *gtk.TextBuffer {
+// 	buffer, err := tv.GetBuffer()
+// 	if err != nil {
+// 		log.Fatal("Unable to get buffer:", err)
+// 	}
+// 	return buffer
+// }
+//
+// func get_text_from_tview(tv *gtk.TextView) string {
+// 	buffer := get_buffer_from_tview(tv)
+// 	start, end := buffer.GetBounds()
+//
+// 	text, err := buffer.GetText(start, end, true)
+// 	if err != nil {
+// 		log.Fatal("Unable to get text:", err)
+// 	}
+// 	return text
+// }
+//
+// func set_text_in_tview(tv *gtk.TextView, text string) {
+// 	buffer := get_buffer_from_tview(tv)
+// 	buffer.SetText(text)
+// }
+
+func Start() (*gtk.Window, *gtk.TextView) {
 	gtk.Init(nil)
 
-	builder, err := gtk.BuilderNewFromFile("gui.glade")
-	if err != nil {
-		log.Fatal("Unable to load gui.glade:", err)
-	}
+	win := setup_window("Ezphp")
+	box := setup_box(gtk.ORIENTATION_VERTICAL)
+	win.Add(box)
 
-	winObj, err := builder.GetObject("mainWindow")
-	if err != nil {
-		log.Fatal("Unable to find window:", err)
-	}
+	tv := setup_tview()
+	//set_text_in_tview(tv, "Hello there!")
+	box.PackStart(tv, true, true, 0)
 
-	tvObj, err := builder.GetObject("logview")
-	if err != nil {
-		log.Fatal("Unable to find textview:", err)
-	}
+	btn := setup_btn("Submit", func() {
+		// text := get_text_from_tview(tv)
+		fmt.Println("Ok")
+	})
+	box.Add(btn)
 
-	tv := tvObj.(*gtk.TextView)
-	win := winObj.(*gtk.Window)
-
-	return &Gui{
-		Builder: builder,
-		Tv:      tv,
-		Window:  win,
-	}
-
+	return win, tv
 }
 
-func Start() {
-	logrus.Debug("Starting GUI")
-	gui := NewGui()
-	gui.Show()
+func Show(win *gtk.Window) {
+	// Recursively show all widgets contained in this window.
+	win.ShowAll()
+
+	// Begin executing the GTK main loop.  This blocks until
+	// gtk.MainQuit() is run.
+	gtk.Main()
 }

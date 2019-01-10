@@ -25,9 +25,9 @@ type serveArguments struct {
 	documentRoot string
 }
 
-func Start(args ezargs.Arguments) {
+func Start(args ezargs.Arguments, inout ezio.EzIO) {
 
-	var ezIO ezio.EzIO = WhiteIO{}
+	var ezIO ezio.EzIO = inout
 	var phpPath string
 	var err error
 
