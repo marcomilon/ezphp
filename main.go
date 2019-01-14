@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/marcomilon/ezphp/cli"
 	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/gui"
 	"github.com/sirupsen/logrus"
@@ -46,10 +45,11 @@ func main() {
 	}
 
 	if ezargs.Gui {
-		win, tv := gui.Start()
-		guiio := gui.GuiIO{Tv: tv}
-		go gui.Show(win)
-		cli.Start(ezargs, guiio)
+		// win, tv := gui.Start()
+		// guiio := gui.GuiIO{Tv: tv}
+		// go gui.Show(win)
+		// cli.Start(ezargs, guiio)
+		gui.StartUI()
 	} else {
 		//cli.Start(ezargs)
 	}
