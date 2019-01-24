@@ -3,50 +3,44 @@ package gui
 import (
 	"os"
 
-	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/gui"
-	"github.com/therecipe/qt/quick"
-	"github.com/therecipe/qt/quickcontrols2"
+	"github.com/therecipe/qt/widgets"
 )
 
 func StartUI() {
 
-	// enable high dpi scaling
-	// useful for devices with high pixel density displays
-	// such as smartphones, retina displays, ...
-	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
+	// needs to be called once before you can start using the QWidgets
+	app := widgets.NewQApplication(len(os.Args), os.Args)
 
-	// needs to be called once before you can start using QML
-	gui.NewQGuiApplication(len(os.Args), os.Args)
+	// create a window
+	// with a minimum size of 250*200
+	// and sets the title to "Hello Widgets Example"
+	window := widgets.NewQMainWindow(nil, 0)
+	window.SetMinimumSize2(800, 600)
+	window.SetWindowTitle("EzPHP")
 
-	// use the material style
-	// the other inbuild styles are:
-	// Default, Fusion, Imagine, Universal
-	quickcontrols2.QQuickStyle_SetStyle("Fusion")
+	// create a regular widget
+	// give it a QVBoxLayout
+	// and make it the central widget of the window
+	widget := widgets.NewQWidget(nil, 0)
+	widget.SetLayout(widgets.NewQVBoxLayout())
+	window.SetCentralWidget(widget)
 
-	// // create the qml application engine
-	// engine := qml.NewQQmlApplicationEngine(nil)
-	//
-	// // load the embedded qml file
-	// // created by either qtrcc or qtdeploy
-	// // engine.Load(core.NewQUrl3("qrc:/qml/ui.qml", 0))
-	// // you can also load a local file like this instead:
-	// engine.Load(core.QUrl_FromLocalFile("./gui/qml/ui.qml"))
+	// create a line edit
+	// with a custom placeholder text
+	// and add it to the central widgets layout
+	input := widgets.NewQTextEdit(nil)
+	input.SetStyleSheet("QTextEdit { background-color: black; color: white; font-size: 16px }")
+	//input.SetPlaceholderText("Write something ...")
+	widget.Layout().AddWidget(input)
 
-	view := quick.NewQQuickView(nil)
-	view.SetMinimumSize(core.NewQSize2(800, 600))
-	view.SetResizeMode(quick.QQuickView__SizeRootObjectToView)
-	view.SetTitle("EzPHP")
+	// make the window visible
+	window.Show()
 
-	view.SetSource(core.QUrl_FromLocalFile("./gui/qml/ui.qml"))
-
-	input := view.RootObject().FindChild("outText", core.Qt__FindChildrenRecursively)
-	input.SetProperty("text", core.NewQVariant14("EzPHP\n"))
-
-	view.Show()
+	input.Append("Ez")
+	input.Append("Php")
 
 	// start the main Qt event loop
 	// and block until app.Exit() is called
 	// or the window is closed by the user
-	gui.QGuiApplication_Exec()
+	app.Exec()
 }
