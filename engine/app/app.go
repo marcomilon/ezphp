@@ -1,4 +1,4 @@
-package cli
+package app
 
 import (
 	"bufio"
@@ -98,7 +98,6 @@ func Start(args ezargs.Arguments, inout ezio.EzIO) {
 	ezIO.Info("Copy for PHP file in the directory: " + localDocRoot + "\n")
 	ezIO.Info("Open your browser to http://" + args.Host + "\n")
 	ezIO.Info("Web server is running ...\n")
-	ezIO.Info("Press CTRL+C to exit\n")
 
 	phpServer := php.Server{
 		phpPath,

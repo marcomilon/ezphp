@@ -1,46 +1,75 @@
 package gui
 
 import (
-	"os"
+	"fmt"
+	"log"
 
-	"github.com/therecipe/qt/widgets"
+	"github.com/gotk3/gotk3/gtk"
 )
 
+type GuiIO struct {
+	Tv *gtk.TextView
+}
+
+func (guiIO GuiIO) Write(b []byte) (int, error) {
+	s := string(b[0:])
+
+	buffer, _ := guiIO.Tv.GetBuffer()
+	buffer.InsertAtCursor(s)
+
+	return len(s), nil
+}
+
+func (guiIO GuiIO) Info(s string) {
+	buffer, _ := guiIO.Tv.GetBuffer()
+	buffer.InsertAtCursor(s)
+}
+
+func (guiIO GuiIO) Error(s string) {
+	buffer, _ := guiIO.Tv.GetBuffer()
+	buffer.InsertAtCursor(s)
+}
+
+func (guiIO GuiIO) Custom(tag string, s string) {
+	fmt.Print(s)
+}
+
+func (guiIO GuiIO) Confirm(question string) bool {
+
+	return false
+}
+
 func StartUI() {
+	gtk.Main()
+}
 
-	// needs to be called once before you can start using the QWidgets
-	app := widgets.NewQApplication(len(os.Args), os.Args)
+func SetupUI() GuiIO {
+	gtk.Init(nil)
 
-	// create a window
-	// with a minimum size of 250*200
-	// and sets the title to "Hello Widgets Example"
-	window := widgets.NewQMainWindow(nil, 0)
-	window.SetMinimumSize2(800, 600)
-	window.SetWindowTitle("EzPHP")
+	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	if err != nil {
+		log.Fatal("Unable to create window:", err)
+	}
 
-	// create a regular widget
-	// give it a QVBoxLayout
-	// and make it the central widget of the window
-	widget := widgets.NewQWidget(nil, 0)
-	widget.SetLayout(widgets.NewQVBoxLayout())
-	window.SetCentralWidget(widget)
+	win.SetTitle("EzPHP")
+	win.Connect("destroy", func() {
+		gtk.MainQuit()
+	})
 
-	// create a line edit
-	// with a custom placeholder text
-	// and add it to the central widgets layout
-	input := widgets.NewQTextEdit(nil)
-	input.SetStyleSheet("QTextEdit { background-color: black; color: white; font-size: 16px }")
-	//input.SetPlaceholderText("Write something ...")
-	widget.Layout().AddWidget(input)
+	sw, err := gtk.ScrolledWindowNew(nil, nil)
+	if nil != err {
+		log.Fatal("Unable to create label:", err)
+	}
 
-	// make the window visible
-	window.Show()
+	tv, err := gtk.TextViewNew()
+	if err != nil {
+		log.Fatal("Unable to create label:", err)
+	}
 
-	input.Append("Ez")
-	input.Append("Php")
+	sw.Add(tv)
+	win.Add(sw)
+	win.SetDefaultSize(800, 600)
+	win.ShowAll()
 
-	// start the main Qt event loop
-	// and block until app.Exit() is called
-	// or the window is closed by the user
-	app.Exec()
+	return GuiIO{Tv: tv}
 }

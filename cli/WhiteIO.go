@@ -22,10 +22,6 @@ func (WhiteIO) Error(s string) {
 	fmt.Print(s)
 }
 
-func (WhiteIO) Custom(tag string, s string) {
-	fmt.Print(s)
-}
-
 func (io WhiteIO) Confirm(question string) bool {
 
 	var confirmation string
