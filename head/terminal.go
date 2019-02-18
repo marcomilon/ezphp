@@ -1,28 +1,28 @@
-package cli
+package head
 
 import (
 	"fmt"
 	"strings"
 )
 
-type WhiteIO struct{}
+type Terminal struct{}
 
-func (WhiteIO) Write(b []byte) (int, error) {
+func (Terminal) Write(b []byte) (int, error) {
 	s := string(b[0:])
 	fmt.Print(s)
 
 	return len(b), nil
 }
 
-func (WhiteIO) Info(s string) {
+func (Terminal) Info(s string) {
 	fmt.Print(s)
 }
 
-func (WhiteIO) Error(s string) {
+func (Terminal) Error(s string) {
 	fmt.Print(s)
 }
 
-func (io WhiteIO) Confirm(question string) bool {
+func (io Terminal) Confirm(question string) bool {
 
 	var confirmation string
 

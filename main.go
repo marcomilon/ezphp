@@ -5,10 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/marcomilon/ezphp/cli"
 	"github.com/marcomilon/ezphp/engine/app"
 	"github.com/marcomilon/ezphp/engine/ezargs"
-	"github.com/marcomilon/ezphp/gui"
+	"github.com/marcomilon/ezphp/head"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,12 +46,12 @@ func main() {
 	}
 
 	if ezargs.Gui {
-		guiIO := gui.SetupUI()
-		go gui.StartUI()
+		guiIO := head.SetupUI()
+		go head.StartUI()
 		app.Start(ezargs, guiIO)
 	} else {
-		whiteIO := cli.WhiteIO{}
-		app.Start(ezargs, whiteIO)
+		terminal := head.Terminal{}
+		app.Start(ezargs, terminal)
 	}
 
 }

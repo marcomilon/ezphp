@@ -1,4 +1,4 @@
-package gui
+package head
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-type GuiIO struct {
+type GtkUI struct {
 	Tv *gtk.TextView
 }
 
-func (guiIO GuiIO) Write(b []byte) (int, error) {
+func (guiIO GtkUI) Write(b []byte) (int, error) {
 	s := string(b[0:])
 
 	buffer, _ := guiIO.Tv.GetBuffer()
@@ -20,21 +20,21 @@ func (guiIO GuiIO) Write(b []byte) (int, error) {
 	return len(s), nil
 }
 
-func (guiIO GuiIO) Info(s string) {
+func (guiIO GtkUI) Info(s string) {
 	buffer, _ := guiIO.Tv.GetBuffer()
 	buffer.InsertAtCursor(s)
 }
 
-func (guiIO GuiIO) Error(s string) {
+func (guiIO GtkUI) Error(s string) {
 	buffer, _ := guiIO.Tv.GetBuffer()
 	buffer.InsertAtCursor(s)
 }
 
-func (guiIO GuiIO) Custom(tag string, s string) {
+func (guiIO GtkUI) Custom(tag string, s string) {
 	fmt.Print(s)
 }
 
-func (guiIO GuiIO) Confirm(question string) bool {
+func (guiIO GtkUI) Confirm(question string) bool {
 
 	return false
 }
@@ -43,7 +43,7 @@ func StartUI() {
 	gtk.Main()
 }
 
-func SetupUI() GuiIO {
+func SetupUI() GtkUI {
 	gtk.Init(nil)
 
 	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
@@ -71,5 +71,5 @@ func SetupUI() GuiIO {
 	win.SetDefaultSize(800, 600)
 	win.ShowAll()
 
-	return GuiIO{Tv: tv}
+	return GtkUI{Tv: tv}
 }
