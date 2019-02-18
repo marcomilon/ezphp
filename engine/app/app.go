@@ -10,6 +10,8 @@ import (
 	"github.com/marcomilon/ezphp/engine/ezio"
 	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
+	"github.com/marcomilon/ezphp/engine/php/install"
+	"github.com/marcomilon/ezphp/engine/php/serve"
 	"github.com/sirupsen/logrus"
 )
 
@@ -36,17 +38,17 @@ func Start(args ezargs.Arguments, inout ezio.EzIO) {
 		os.Exit(0)
 	}
 
-	channels := php.Channels{
-		make(chan string),
-		make(chan string),
-		make(chan bool),
+	ioChannels := php.IOChannels{
+		Outmsg: make(chan string),
+		Errmsg: make(chan string),
+		Done:   make(chan bool),
 	}
 
-	installer := php.Installer{
+	installer := install.Installer{
 		downloadUrl,
 		fileName,
 		args.InstallDir,
-		channels,
+		ioChannels,
 	}
 
 	ezIO.Info("EzPHP v" + php.EzPHPVersion + "\n")
@@ -64,7 +66,7 @@ func Start(args ezargs.Arguments, inout ezio.EzIO) {
 			ezIO.Info("Installing PHP v7.0.0 in your local directory: " + localPHP + "\n")
 			ezIO.Info("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
 
-			go installer.Install()
+			go installer.Execute()
 
 		Progress:
 			for {
@@ -74,7 +76,6 @@ func Start(args ezargs.Arguments, inout ezio.EzIO) {
 				case errMsg := <-installer.Errmsg:
 					ezIO.Error("\nFailed to install PHP: " + errMsg + "\n")
 					byebye(ezIO)
-
 				case <-installer.Done:
 					ezIO.Info(fmt.Sprintf("\rDownload in progress: %s", "100%  "))
 					break Progress
@@ -99,14 +100,14 @@ func Start(args ezargs.Arguments, inout ezio.EzIO) {
 	ezIO.Info("Open your browser to http://" + args.Host + "\n")
 	ezIO.Info("Web server is running ...\n")
 
-	phpServer := php.Server{
+	phpServer := serve.Server{
 		phpPath,
 		args.Host,
 		args.DocRoot,
-		channels,
+		ioChannels,
 	}
 
-	go phpServer.Serve()
+	go phpServer.Execute()
 Serve:
 	for {
 		select {

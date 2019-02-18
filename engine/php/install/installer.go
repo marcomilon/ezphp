@@ -1,4 +1,4 @@
-package php
+package install
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (i *Installer) Install() {
+func (i *Installer) Execute() {
 
 	var err error
 	defer func() {

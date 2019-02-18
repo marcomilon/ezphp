@@ -1,4 +1,4 @@
-package php
+package serve
 
 import (
 	"os/exec"
@@ -28,7 +28,7 @@ func (e errMsg) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func (s Server) Serve() {
+func (s Server) Execute() {
 	logrus.Info("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
 	out := outMsg{out: s.Outmsg}
