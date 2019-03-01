@@ -43,7 +43,7 @@ func StartUI() {
 	gtk.Main()
 }
 
-func SetupUI() GtkUI {
+func StartUI(ioCom engine.IOCom) {
 	gtk.Init(nil)
 
 	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
@@ -70,6 +70,8 @@ func SetupUI() GtkUI {
 	win.Add(sw)
 	win.SetDefaultSize(800, 600)
 	win.ShowAll()
+	
+	
 
-	return GtkUI{Tv: tv}
+	gtk.Main()
 }
