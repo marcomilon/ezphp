@@ -1,32 +1,41 @@
 package head
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
+
+	"github.com/marcomilon/ezphp/engine"
 )
 
-type Terminal struct{}
+func StartTerminal(ioCom engine.IOCom) {
+Terminal:
+	for {
+		select {
+		case outmsg := <-ioCom.Outmsg:
+			fmt.Print(outmsg)
+		case errMsg := <-ioCom.Errmsg:
+			fmt.Print(errMsg)
+		case <-ioCom.Done:
+			byebye()
+			break Terminal
+		}
+	}
 
-func (Terminal) Write(b []byte) (int, error) {
-	s := string(b[0:])
-	fmt.Print(s)
-
-	return len(b), nil
+	os.Exit(0)
 }
 
-func (Terminal) Info(s string) {
-	fmt.Print(s)
+func byebye() {
+	fmt.Println("\nPress 'Enter' to exit...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
 
-func (Terminal) Error(s string) {
-	fmt.Print(s)
-}
-
-func (io Terminal) Confirm(question string) bool {
+func Confirm(question string) bool {
 
 	var confirmation string
 
-	io.Info(fmt.Sprintf("%s [y/N]? ", question))
+	fmt.Printf("%s [y/N]? ", question)
 	fmt.Scanln(&confirmation)
 
 	confirmation = strings.TrimSpace(confirmation)

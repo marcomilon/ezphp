@@ -3,8 +3,15 @@ package serve
 import (
 	"os/exec"
 
+	"github.com/marcomilon/ezphp/engine"
 	"github.com/sirupsen/logrus"
 )
+
+type Server struct {
+	PhpExe  string
+	Host    string
+	DocRoot string
+}
 
 type outMsg struct {
 	out chan string
@@ -28,11 +35,11 @@ func (e errMsg) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func (s Server) Execute() {
+func (s Server) StartServer(ioCom engine.IOCom) {
 	logrus.Info("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
-	out := outMsg{out: s.Outmsg}
-	err := errMsg{err: s.Errmsg}
+	out := outMsg{out: ioCom.Outmsg}
+	err := errMsg{err: ioCom.Errmsg}
 
 	cmd := exec.Command(s.PhpExe, "-S", s.Host, "-t", s.DocRoot)
 	cmd.Stdout = out
@@ -41,7 +48,7 @@ func (s Server) Execute() {
 	errCmd := cmd.Run()
 
 	if errCmd != nil {
-		s.Errmsg <- errCmd.Error()
-		s.Done <- true
+		ioCom.Errmsg <- errCmd.Error()
+		ioCom.Done <- true
 	}
 }

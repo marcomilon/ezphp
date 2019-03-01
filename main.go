@@ -5,7 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/marcomilon/ezphp/engine/app"
+	"github.com/marcomilon/ezphp/app"
+	"github.com/marcomilon/ezphp/engine"
 	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/head"
 	"github.com/sirupsen/logrus"
@@ -33,7 +34,6 @@ func main() {
 	docRoot := flag.String("t", "public_html", "<docroot> - Specify document root <docroot> for built-in web server.")
 	installDir := flag.String("installDir", "localPHP", "<directory> - Installation directory for PHP.")
 	useGui := flag.Bool("gui", false, "Use gui interface.")
-	about := flag.Bool("about", false, "Display about information.")
 
 	flag.Parse()
 
@@ -41,17 +41,22 @@ func main() {
 		*host,
 		*docRoot,
 		*installDir,
-		*about,
 		*useGui,
 	}
 
+	ioChannels := engine.IOCom{
+		Outmsg: make(chan string),
+		Errmsg: make(chan string),
+		Done:   make(chan bool),
+	}
+
 	if ezargs.Gui {
-		guiIO := head.SetupUI()
-		go head.StartUI()
-		app.Start(ezargs, guiIO)
+		// guiIO := head.SetupUI()
+		// go head.StartUI()
+		// app.Start(ezargs, guiIO)
 	} else {
-		terminal := head.Terminal{}
-		app.Start(ezargs, terminal)
+		go head.StartTerminal(ioChannels)
+		app.Start(ezargs, ioChannels)
 	}
 
 }

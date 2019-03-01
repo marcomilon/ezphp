@@ -6,34 +6,38 @@ import (
 	"time"
 
 	"github.com/cavaliercoder/grab"
+	"github.com/marcomilon/ezphp/engine"
 	"github.com/mholt/archiver"
 	"github.com/sirupsen/logrus"
 )
 
-func (i *Installer) Execute() {
+type Installer struct {
+	DownloadUrl string
+	Filename    string
+	InstallDir  string
+}
+
+func (i *Installer) InstallPHP(ioCom engine.IOCom) {
 
 	var err error
-	defer func() {
-		i.Done <- true
-	}()
 
-	_, err = i.download()
+	_, err = i.download(ioCom)
 	if err != nil {
 		logrus.Error("Error downloading file " + err.Error())
-		i.Errmsg <- err.Error()
+		ioCom.Errmsg <- err.Error()
 		return
 	}
 
 	err = i.unzip()
 	if err != nil {
 		logrus.Error("Error unzipping file " + err.Error())
-		i.Errmsg <- err.Error()
+		ioCom.Errmsg <- err.Error()
 		return
 	}
 
 }
 
-func (i Installer) download() (*grab.Response, error) {
+func (i Installer) download(ioCom engine.IOCom) (*grab.Response, error) {
 	logrus.Info("Downloading PHP from " + i.DownloadUrl + "/" + i.Filename)
 	client := grab.NewClient()
 	req, _ := grab.NewRequest(i.InstallDir+string(os.PathSeparator)+i.Filename, i.DownloadUrl+"/"+i.Filename)
@@ -45,13 +49,15 @@ Loop:
 	for {
 		select {
 		case <-t.C:
-			i.Outmsg <- fmt.Sprintf("%.2f%%", 100*resp.Progress())
+			ioCom.Outmsg <- fmt.Sprintf("\rDownload in progress: %.2f%%", 100*resp.Progress())
 
 		case <-resp.Done:
 			break Loop
 		}
 
 	}
+
+	ioCom.Outmsg <- fmt.Sprint("\rDownload in progress: 100%  ")
 
 	if err := resp.Err(); err != nil {
 		return nil, resp.Err()
