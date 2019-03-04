@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/marcomilon/ezphp/engine"
 )
 
 type GtkUI struct {
@@ -70,8 +71,6 @@ func StartUI(ioCom engine.IOCom) {
 	win.Add(sw)
 	win.SetDefaultSize(800, 600)
 	win.ShowAll()
-	
-	
 
 	gtk.Main()
 }

@@ -8,8 +8,6 @@ import (
 	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
-	"github.com/marcomilon/ezphp/engine/php/install"
-	"github.com/marcomilon/ezphp/engine/php/serve"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,7 +27,7 @@ func Start(args ezargs.Arguments, ioChannels engine.IOCom) {
 	var phpPath string
 	var err error
 
-	installer := install.Installer{
+	installer := php.Installer{
 		downloadUrl,
 		fileName,
 		args.InstallDir,
@@ -69,7 +67,7 @@ func Start(args ezargs.Arguments, ioChannels engine.IOCom) {
 	buffer.out("Open your browser to http://" + args.Host + "\n")
 	buffer.out("Web server is running ...\n")
 
-	phpServer := serve.Server{
+	phpServer := php.Server{
 		phpPath,
 		args.Host,
 		args.DocRoot,

@@ -1,4 +1,4 @@
-package serve
+package php
 
 import (
 	"os/exec"
