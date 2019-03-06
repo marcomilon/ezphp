@@ -50,9 +50,8 @@ func main() {
 	}
 
 	if ezargs.Gui {
-		// guiIO := head.SetupUI()
-		// go head.StartUI()
-		// app.Start(ezargs, guiIO)
+		go app.StartUI(ioChannels)
+		app.Start(ezargs, ioChannels)
 	} else {
 		go app.StartTerminal(ioChannels)
 		app.Start(ezargs, ioChannels)

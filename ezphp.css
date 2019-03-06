@@ -1,0 +1,11 @@
+* {
+    font-size: 12px;
+    font-family: "Mono";
+    padding-top: 2px;
+    padding-left: 2px;
+    background:#282c34;
+}
+
+textview text {
+    color: #cdcdcd;
+}
