@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/cavaliercoder/grab"
-	"github.com/marcomilon/ezphp/engine"
 	"github.com/mholt/archiver"
 	"github.com/sirupsen/logrus"
 )
@@ -17,7 +16,7 @@ type Installer struct {
 	InstallDir  string
 }
 
-func (i *Installer) InstallPHP(ioCom engine.IOCom) {
+func (i *Installer) InstallPHP(ioCom IOCom) {
 
 	var err error
 
@@ -37,7 +36,7 @@ func (i *Installer) InstallPHP(ioCom engine.IOCom) {
 
 }
 
-func (i Installer) download(ioCom engine.IOCom) (*grab.Response, error) {
+func (i Installer) download(ioCom IOCom) (*grab.Response, error) {
 	logrus.Info("Downloading PHP from " + i.DownloadUrl + "/" + i.Filename)
 	client := grab.NewClient()
 	req, _ := grab.NewRequest(i.InstallDir+string(os.PathSeparator)+i.Filename, i.DownloadUrl+"/"+i.Filename)

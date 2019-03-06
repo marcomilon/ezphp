@@ -3,7 +3,6 @@ package php
 import (
 	"os/exec"
 
-	"github.com/marcomilon/ezphp/engine"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,7 +34,7 @@ func (e errMsg) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func (s Server) StartServer(ioCom engine.IOCom) {
+func (s Server) StartServer(ioCom IOCom) {
 	logrus.Info("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
 	out := outMsg{out: ioCom.Outmsg}

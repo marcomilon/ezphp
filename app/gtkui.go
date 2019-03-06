@@ -1,11 +1,11 @@
-package head
+package app
 
 import (
 	"fmt"
 	"log"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/marcomilon/ezphp/engine"
+	"github.com/marcomilon/ezphp/engine/php"
 )
 
 type GtkUI struct {
@@ -44,7 +44,7 @@ func StartUI() {
 	gtk.Main()
 }
 
-func StartUI(ioCom engine.IOCom) {
+func SetupUI(ioCom php.IOCom) {
 	gtk.Init(nil)
 
 	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)

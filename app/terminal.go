@@ -1,4 +1,4 @@
-package head
+package app
 
 import (
 	"bufio"
@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/marcomilon/ezphp/engine"
+	"github.com/marcomilon/ezphp/engine/php"
 )
 
-func StartTerminal(ioCom engine.IOCom) {
+func StartTerminal(ioCom php.IOCom) {
 Terminal:
 	for {
 		select {

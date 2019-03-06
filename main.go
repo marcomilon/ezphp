@@ -6,9 +6,8 @@ import (
 	"os"
 
 	"github.com/marcomilon/ezphp/app"
-	"github.com/marcomilon/ezphp/engine"
 	"github.com/marcomilon/ezphp/engine/ezargs"
-	"github.com/marcomilon/ezphp/head"
+	"github.com/marcomilon/ezphp/engine/php"
 	"github.com/sirupsen/logrus"
 )
 
@@ -44,7 +43,7 @@ func main() {
 		*useGui,
 	}
 
-	ioChannels := engine.IOCom{
+	ioChannels := php.IOCom{
 		Outmsg: make(chan string),
 		Errmsg: make(chan string),
 		Done:   make(chan bool),
@@ -55,7 +54,7 @@ func main() {
 		// go head.StartUI()
 		// app.Start(ezargs, guiIO)
 	} else {
-		go head.StartTerminal(ioChannels)
+		go app.StartTerminal(ioChannels)
 		app.Start(ezargs, ioChannels)
 	}
 

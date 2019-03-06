@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/marcomilon/ezphp/engine"
 	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
@@ -19,10 +18,10 @@ const (
 )
 
 type buffer struct {
-	engine.IOCom
+	php.IOCom
 }
 
-func Start(args ezargs.Arguments, ioChannels engine.IOCom) {
+func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 	var phpPath string
 	var err error
