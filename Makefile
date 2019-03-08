@@ -26,7 +26,10 @@ clean:
 
 format:
 	goimports -w -d $(GOFILES)
-	
+
+run-interactive: 
+	GTK_DEBUG=interactive go run main.go -gui
+
 build-linux: clean
 	$(GOBUILD) -ldflags "-X main.DEBUG=NO" -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)
 	

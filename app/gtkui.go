@@ -8,6 +8,38 @@ import (
 	"github.com/marcomilon/ezphp/engine/php"
 )
 
+func StartWin() {
+	gtk.Init(nil)
+
+	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	if err != nil {
+		log.Fatal("Unable to create window:", err)
+	}
+
+	win.SetTitle("EzPHP")
+	win.Connect("destroy", func() {
+		gtk.MainQuit()
+	})
+
+	l, err := gtk.LabelNew("EzPHP")
+	if err != nil {
+		log.Fatal("Unable to create label:", err)
+	}
+
+	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
+	vbox.PackStart(l, true, false, 0)
+
+	win.Add(vbox)
+	win.SetDefaultSize(800, 600)
+	win.ShowAll()
+
+	dialog := gtk.MessageDialogNew(win, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, "Would you like to install PHP?")
+	dialog.SetTitle("EzPHP")
+	dialog.Run()
+
+	gtk.Main()
+}
+
 func StartUI(ioCom php.IOCom) {
 	gtk.Init(nil)
 
