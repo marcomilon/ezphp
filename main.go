@@ -44,9 +44,10 @@ func main() {
 	}
 
 	ioChannels := php.IOCom{
-		Outmsg: make(chan string),
-		Errmsg: make(chan string),
-		Done:   make(chan bool),
+		Outmsg:  make(chan string),
+		Errmsg:  make(chan string),
+		Confirm: make(chan string),
+		Done:    make(chan bool),
 	}
 
 	if ezargs.Gui {

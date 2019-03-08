@@ -42,6 +42,14 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 	phpPath, err = fs.WhereIsPHP(args.InstallDir)
 	if err != nil {
+
+		ioChannels.Confirm <- "Would you like to install PHP?"
+		result := <-ioChannels.Confirm
+
+		if result == "No" {
+			ioChannels.Done <- true
+		}
+
 		logrus.Info("PHP not founded")
 
 		localPHP, _ := filepath.Abs(args.InstallDir)

@@ -17,6 +17,8 @@ Terminal:
 			fmt.Print(outmsg)
 		case errMsg := <-ioCom.Errmsg:
 			fmt.Print(errMsg)
+		case confirmMsg := <-ioCom.Confirm:
+			Confirm(confirmMsg, ioCom.Confirm)
 		case <-ioCom.Done:
 			byebye()
 			break Terminal
@@ -27,11 +29,11 @@ Terminal:
 }
 
 func byebye() {
-	fmt.Println("\nPress 'Enter' to exit...")
+	fmt.Print("\nPress 'Enter' to exit...")
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
 
-func Confirm(question string) bool {
+func Confirm(question string, result chan string) {
 
 	var confirmation string
 
@@ -42,8 +44,9 @@ func Confirm(question string) bool {
 	confirmation = strings.ToLower(confirmation)
 
 	if confirmation == "y" {
-		return true
+		result <- "Yes"
+		return
 	}
 
-	return false
+	result <- "No"
 }
