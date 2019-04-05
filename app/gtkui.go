@@ -90,7 +90,13 @@ func StartUI(ioCom php.IOCom) {
 			case errMsg := <-ioCom.Errmsg:
 				buffer, _ := tv.GetBuffer()
 				buffer.InsertAtCursor(errMsg)
+			case confirmMsg := <-ioCom.Confirm:
+				buffer, _ := tv.GetBuffer()
+				buffer.InsertAtCursor(confirmMsg + " [y/N] ")
+				ioCom.Confirm <- "No"		
 			case <-ioCom.Done:
+				buffer, _ := tv.GetBuffer()
+				buffer.InsertAtCursor("\n\nClose window to exit...")
 				break Gui
 			}
 		}

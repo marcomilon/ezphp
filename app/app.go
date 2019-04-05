@@ -45,7 +45,7 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 		ioChannels.Confirm <- "Would you like to install PHP?"
 		result := <-ioChannels.Confirm
-
+		
 		if result == "No" {
 			ioChannels.Done <- true
 		}

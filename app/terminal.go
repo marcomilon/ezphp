@@ -37,7 +37,7 @@ func Confirm(question string, result chan string) {
 
 	var confirmation string
 
-	fmt.Printf("%s [y/N]? ", question)
+	fmt.Printf("%s [y/N] ", question)
 	fmt.Scanln(&confirmation)
 
 	confirmation = strings.TrimSpace(confirmation)
