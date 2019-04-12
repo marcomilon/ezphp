@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/marcomilon/ezphp/engine/php"
 )
@@ -91,9 +92,10 @@ func StartUI(ioCom php.IOCom) {
 				buffer, _ := tv.GetBuffer()
 				buffer.InsertAtCursor(errMsg)
 			case confirmMsg := <-ioCom.Confirm:
+				log.Println("Confirm")
 				buffer, _ := tv.GetBuffer()
 				buffer.InsertAtCursor(confirmMsg + " [y/N] ")
-				ioCom.Confirm <- "No"		
+				confirm(ioCom, tv)				
 			case <-ioCom.Done:
 				buffer, _ := tv.GetBuffer()
 				buffer.InsertAtCursor("\n\nClose window to exit...")
@@ -108,4 +110,24 @@ func StartUI(ioCom php.IOCom) {
 	win.ShowAll()
 
 	gtk.Main()
+}
+
+func confirm(ioCom php.IOCom, tv *gtk.TextView) glib.SignalHandle {
+
+	keyPressed, _ := tv.Connect("key-press-event", func(tv *gtk.TextView, ev *gdk.Event) {
+
+		keyEvent := &gdk.EventKey{ev}
+
+		if keyEvent.KeyVal() == gdk.KEY_y {
+			log.Println("Yes")
+			ioCom.Confirm <- "Yes"
+		} else {
+			log.Println("No")
+			ioCom.Confirm <- "No"
+		}
+
+	})
+
+	return keyPressed
+
 }
