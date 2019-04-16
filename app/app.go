@@ -45,7 +45,7 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 		ioChannels.Confirm <- "Would you like to install PHP?"
 		result := <-ioChannels.Confirm
-		
+
 		if result == "No" {
 			ioChannels.Done <- true
 		}
@@ -54,7 +54,7 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 		localPHP, _ := filepath.Abs(args.InstallDir)
 
-		buffer.out("Installing PHP v7.0.0 in your local directory: " + localPHP + "\n")
+		buffer.out("\nInstalling PHP v7.0.0 in your local directory: " + localPHP + "\n")
 		buffer.out("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
 
 		installer.InstallPHP(ioChannels)

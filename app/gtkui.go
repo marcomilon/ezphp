@@ -9,6 +9,10 @@ import (
 	"github.com/marcomilon/ezphp/engine/php"
 )
 
+var listenToKeyEvents = true
+var freezeTextView = false
+var TextViewText = ""
+
 func StartWin() {
 	gtk.Init(nil)
 
@@ -81,24 +85,37 @@ func StartUI(ioCom php.IOCom) {
 		log.Fatal("Unable to create label: ", err)
 	}
 
+	tv.Connect("key-press-event", func(tv *gtk.TextView, ev *gdk.Event) {
+
+		if listenToKeyEvents {
+
+			listenToKeyEvents = false
+			freezeTextView = true
+
+			keyEvent := &gdk.EventKey{ev}
+
+			if keyEvent.KeyVal() == gdk.KEY_y {
+				ioCom.Confirm <- "Yes"
+			} else {
+				ioCom.Confirm <- "No"
+			}
+
+		}
+
+	})
+
 	go func(ioCom php.IOCom, tv *gtk.TextView) {
 	Gui:
 		for {
 			select {
 			case outmsg := <-ioCom.Outmsg:
-				buffer, _ := tv.GetBuffer()
-				buffer.InsertAtCursor(outmsg)
+				sendToTv(tv, outmsg)
 			case errMsg := <-ioCom.Errmsg:
-				buffer, _ := tv.GetBuffer()
-				buffer.InsertAtCursor(errMsg)
+				sendToTv(tv, errMsg)
 			case confirmMsg := <-ioCom.Confirm:
-				log.Println("Confirm")
-				buffer, _ := tv.GetBuffer()
-				buffer.InsertAtCursor(confirmMsg + " [y/N] ")
-				confirm(ioCom, tv)				
+				sendToTv(tv, confirmMsg+" [y/N] ")
 			case <-ioCom.Done:
-				buffer, _ := tv.GetBuffer()
-				buffer.InsertAtCursor("\n\nClose window to exit...")
+				sendToTv(tv, "\n\nClose window to exit...")
 				break Gui
 			}
 		}
@@ -112,22 +129,21 @@ func StartUI(ioCom php.IOCom) {
 	gtk.Main()
 }
 
-func confirm(ioCom php.IOCom, tv *gtk.TextView) glib.SignalHandle {
+func sendToTv(tv *gtk.TextView, outmsg string) {
+	glib.IdleAdd(func() {
+		buffer, _ := tv.GetBuffer()
 
-	keyPressed, _ := tv.Connect("key-press-event", func(tv *gtk.TextView, ev *gdk.Event) {
+		if freezeTextView {
 
-		keyEvent := &gdk.EventKey{ev}
+			if TextViewText == "" {
+				buffer, _ := tv.GetBuffer()
+				start, end := buffer.GetBounds()
+				TextViewText, _ = buffer.GetText(start, end, true)
+			}
 
-		if keyEvent.KeyVal() == gdk.KEY_y {
-			log.Println("Yes")
-			ioCom.Confirm <- "Yes"
+			buffer.SetText(TextViewText + outmsg)
 		} else {
-			log.Println("No")
-			ioCom.Confirm <- "No"
+			buffer.InsertAtCursor(outmsg)
 		}
-
 	})
-
-	return keyPressed
-
 }
