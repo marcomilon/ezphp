@@ -86,5 +86,6 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 }
 
 func (b buffer) out(msg string) {
-	b.Outmsg <- msg
+	outmsg := php.NewIOMessage("stdout", msg)
+	b.Outmsg <- outmsg
 }

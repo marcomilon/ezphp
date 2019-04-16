@@ -13,23 +13,27 @@ type Server struct {
 }
 
 type outMsg struct {
-	out chan string
+	out chan IOMessage
 }
 
 type errMsg struct {
-	err chan string
+	err chan IOMessage
 }
 
 func (o outMsg) Write(p []byte) (n int, err error) {
 	s := string(p)
-	o.out <- s
+
+	outmsg := NewIOMessage("stdout", s)
+	o.out <- outmsg
 
 	return len(p), nil
 }
 
 func (e errMsg) Write(p []byte) (n int, err error) {
 	s := string(p)
-	e.err <- s
+
+	errmsg := NewIOMessage("stderr", s)
+	e.err <- errmsg
 
 	return len(p), nil
 }
@@ -38,7 +42,7 @@ func (s Server) StartServer(ioCom IOCom) {
 	logrus.Info("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
 	out := outMsg{out: ioCom.Outmsg}
-	err := errMsg{err: ioCom.Errmsg}
+	err := errMsg{err: ioCom.Outmsg}
 
 	cmd := exec.Command(s.PhpExe, "-S", s.Host, "-t", s.DocRoot)
 	cmd.Stdout = out
@@ -47,7 +51,8 @@ func (s Server) StartServer(ioCom IOCom) {
 	errCmd := cmd.Run()
 
 	if errCmd != nil {
-		ioCom.Errmsg <- errCmd.Error()
+		errmsg := NewIOMessage("stderr", errCmd.Error())
+		ioCom.Outmsg <- errmsg
 		ioCom.Done <- true
 	}
 }

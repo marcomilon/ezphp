@@ -44,8 +44,7 @@ func main() {
 	}
 
 	ioChannels := php.IOCom{
-		Outmsg:  make(chan string),
-		Errmsg:  make(chan string),
+		Outmsg:  make(chan php.IOMessage),
 		Confirm: make(chan string),
 		Done:    make(chan bool),
 	}

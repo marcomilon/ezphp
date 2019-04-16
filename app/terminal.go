@@ -14,9 +14,9 @@ Terminal:
 	for {
 		select {
 		case outmsg := <-ioCom.Outmsg:
-			fmt.Print(outmsg)
-		case errMsg := <-ioCom.Errmsg:
-			fmt.Print(errMsg)
+			fmt.Print(outmsg.Msg)
+		case errMsg := <-ioCom.Outmsg:
+			fmt.Print(errMsg.Msg)
 		case confirmMsg := <-ioCom.Confirm:
 			Confirm(confirmMsg, ioCom.Confirm)
 		case <-ioCom.Done:

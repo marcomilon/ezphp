@@ -110,12 +110,14 @@ func StartUI(ioCom php.IOCom) {
 			select {
 			case outmsg := <-ioCom.Outmsg:
 				sendToTv(tv, outmsg)
-			case errMsg := <-ioCom.Errmsg:
+			case errMsg := <-ioCom.Outmsg:
 				sendToTv(tv, errMsg)
 			case confirmMsg := <-ioCom.Confirm:
-				sendToTv(tv, confirmMsg+" [y/N] ")
+				input := php.NewIOMessage("stdin", confirmMsg+" [y/N] ")
+				sendToTv(tv, input)
 			case <-ioCom.Done:
-				sendToTv(tv, "\n\nClose window to exit...")
+				outmsg := php.NewIOMessage("stdout", "\n\nClose window to exit...")
+				sendToTv(tv, outmsg)
 				break Gui
 			}
 		}
@@ -129,7 +131,7 @@ func StartUI(ioCom php.IOCom) {
 	gtk.Main()
 }
 
-func sendToTv(tv *gtk.TextView, outmsg string) {
+func sendToTv(tv *gtk.TextView, outmsg php.IOMessage) {
 	glib.IdleAdd(func() {
 		buffer, _ := tv.GetBuffer()
 
@@ -141,9 +143,9 @@ func sendToTv(tv *gtk.TextView, outmsg string) {
 				TextViewText, _ = buffer.GetText(start, end, true)
 			}
 
-			buffer.SetText(TextViewText + outmsg)
+			buffer.SetText(TextViewText + outmsg.Msg)
 		} else {
-			buffer.InsertAtCursor(outmsg)
+			buffer.InsertAtCursor(outmsg.Msg)
 		}
 	})
 }

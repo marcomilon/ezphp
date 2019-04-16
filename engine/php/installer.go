@@ -23,14 +23,14 @@ func (i *Installer) InstallPHP(ioCom IOCom) {
 	_, err = i.download(ioCom)
 	if err != nil {
 		logrus.Error("Error downloading file " + err.Error())
-		ioCom.Errmsg <- err.Error()
+		stdErr(ioCom, err.Error())
 		return
 	}
 
 	err = i.unzip()
 	if err != nil {
 		logrus.Error("Error unzipping file " + err.Error())
-		ioCom.Errmsg <- err.Error()
+		stdErr(ioCom, err.Error())
 		return
 	}
 
@@ -48,7 +48,7 @@ Loop:
 	for {
 		select {
 		case <-t.C:
-			ioCom.Outmsg <- fmt.Sprintf("\rDownload in progress: %.2f%%", 100*resp.Progress())
+			stdOut(ioCom, fmt.Sprintf("\rDownload in progress: %.2f%%", 100*resp.Progress()))
 
 		case <-resp.Done:
 			break Loop
@@ -56,7 +56,7 @@ Loop:
 
 	}
 
-	ioCom.Outmsg <- fmt.Sprint("\rDownload in progress: 100%  ")
+	stdOut(ioCom, fmt.Sprintf("\rDownload in progress: 100%  "))
 
 	if err := resp.Err(); err != nil {
 		return nil, resp.Err()
@@ -73,4 +73,14 @@ func (i Installer) unzip() error {
 	}
 
 	return nil
+}
+
+func stdOut(ioCom IOCom, msg string) {
+	outmsg := NewIOMessage("stdout", msg)
+	ioCom.Outmsg <- outmsg
+}
+
+func stdErr(ioCom IOCom, error string) {
+	errmsg := NewIOMessage("stderr", error)
+	ioCom.Outmsg <- errmsg
 }
