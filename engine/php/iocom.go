@@ -1,5 +1,10 @@
 package php
 
+const STDOUT = "STDOUT"
+const STDERR = "STDERR"
+const STDIN = "STDIN"
+const STDINSTALL = "STDINSTALL"
+
 type IOMessage struct {
 	IOContext string
 	Msg       string
@@ -11,9 +16,30 @@ type IOCom struct {
 	Done    chan bool
 }
 
-func NewIOMessage(ioContext string, msg string) IOMessage {
+func NewStdout(msg string) IOMessage {
 	return IOMessage{
-		ioContext,
+		STDOUT,
+		msg,
+	}
+}
+
+func NewStderr(msg string) IOMessage {
+	return IOMessage{
+		STDERR,
+		msg,
+	}
+}
+
+func NewStdin(msg string) IOMessage {
+	return IOMessage{
+		STDIN,
+		msg,
+	}
+}
+
+func NewStdInstall(msg string) IOMessage {
+	return IOMessage{
+		STDINSTALL,
 		msg,
 	}
 }

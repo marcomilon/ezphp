@@ -54,9 +54,6 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 		localPHP, _ := filepath.Abs(args.InstallDir)
 
-		buffer.out("\nInstalling PHP v7.0.0 in your local directory: " + localPHP + "\n")
-		buffer.out("Downloading PHP from: " + downloadUrl + "/" + fileName + "\n")
-
 		installer.InstallPHP(ioChannels)
 
 		phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
@@ -86,6 +83,6 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 }
 
 func (b buffer) out(msg string) {
-	outmsg := php.NewIOMessage("stdout", msg)
+	outmsg := php.NewStdout(msg)
 	b.Outmsg <- outmsg
 }

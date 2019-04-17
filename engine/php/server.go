@@ -23,8 +23,7 @@ type errMsg struct {
 func (o outMsg) Write(p []byte) (n int, err error) {
 	s := string(p)
 
-	outmsg := NewIOMessage("stdout", s)
-	o.out <- outmsg
+	o.out <- NewStdout(s)
 
 	return len(p), nil
 }
@@ -32,8 +31,7 @@ func (o outMsg) Write(p []byte) (n int, err error) {
 func (e errMsg) Write(p []byte) (n int, err error) {
 	s := string(p)
 
-	errmsg := NewIOMessage("stderr", s)
-	e.err <- errmsg
+	e.err <- NewStderr(s)
 
 	return len(p), nil
 }
@@ -51,8 +49,7 @@ func (s Server) StartServer(ioCom IOCom) {
 	errCmd := cmd.Run()
 
 	if errCmd != nil {
-		errmsg := NewIOMessage("stderr", errCmd.Error())
-		ioCom.Outmsg <- errmsg
+		ioCom.Outmsg <- NewStderr(errCmd.Error())
 		ioCom.Done <- true
 	}
 }
