@@ -32,7 +32,6 @@ func main() {
 	host := flag.String("S", "localhost:8080", "<addr>:<port> - Run with built-in web server.")
 	docRoot := flag.String("t", "public_html", "<docroot> - Specify document root <docroot> for built-in web server.")
 	installDir := flag.String("installDir", "localPHP", "<directory> - Installation directory for PHP.")
-	useGui := flag.Bool("gui", false, "Use gui interface.")
 
 	flag.Parse()
 
@@ -40,7 +39,6 @@ func main() {
 		*host,
 		*docRoot,
 		*installDir,
-		*useGui,
 	}
 
 	ioChannels := php.IOCom{
@@ -49,12 +47,7 @@ func main() {
 		Done:    make(chan bool),
 	}
 
-	if ezargs.Gui {
-		go app.StartUI(ioChannels)
-		app.Start(ezargs, ioChannels)
-	} else {
-		go app.StartTerminal(ioChannels)
-		app.Start(ezargs, ioChannels)
-	}
+	go app.StartTerminal(ioChannels)
+	app.Start(ezargs, ioChannels)
 
 }
