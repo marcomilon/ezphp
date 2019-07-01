@@ -1,7 +1,6 @@
 package ezargs
 
 type Arguments struct {
-	Host       string
-	DocRoot    string
-	InstallDir string
+	Host    string
+	DocRoot string
 }

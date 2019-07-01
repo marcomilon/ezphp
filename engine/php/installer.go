@@ -3,6 +3,7 @@ package php
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/cavaliercoder/grab"
@@ -20,7 +21,11 @@ func (i *Installer) InstallPHP(ioCom IOCom) {
 
 	var err error
 
-	ioCom.Outmsg <- NewStdInstall("\nInstalling PHP v7.0.0 in your local directory: " + i.InstallDir + "\nDownloading PHP from: " + i.DownloadUrl + "/" + i.Filename + "\n")
+	absPath, _ := filepath.Abs(filepath.Dir(i.InstallDir))
+	localInstallDir := absPath + string(os.PathSeparator) + i.InstallDir
+
+	ioCom.Outmsg <- NewStdInstall("\nInstalling PHP v7.0.0 in your local directory: " + localInstallDir + "\n")
+	ioCom.Outmsg <- NewStdInstall("Downloading PHP from: " + i.DownloadUrl + "/" + i.Filename + "\n")
 
 	_, err = i.download(ioCom)
 	if err != nil {

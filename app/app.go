@@ -15,6 +15,8 @@ const (
 	fileName     = "php-7.0.0-Win32-VC14-x64.zip"
 	ezPHPVersion = "1.1.0"
 	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
+	baseDir      = "ezphp"
+	installDir   = "ezphp/php/7.0.0"
 )
 
 type buffer struct {
@@ -29,7 +31,7 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 	installer := php.Installer{
 		downloadUrl,
 		fileName,
-		args.InstallDir,
+		installDir,
 	}
 
 	buffer := buffer{
@@ -40,7 +42,7 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 	buffer.out(ezPHPWebsite + "\n")
 	buffer.out("\n")
 
-	phpPath, err = fs.WhereIsPHP(args.InstallDir)
+	phpPath, err = fs.WhereIsPHP(installDir)
 	if err != nil {
 
 		ioChannels.Confirm <- "Would you like to install PHP?"
@@ -52,7 +54,7 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 		logrus.Info("PHP not founded")
 
-		localPHP, _ := filepath.Abs(args.InstallDir)
+		localPHP, _ := filepath.Abs(installDir)
 
 		installer.InstallPHP(ioChannels)
 
@@ -61,20 +63,20 @@ func Start(args ezargs.Arguments, ioChannels php.IOCom) {
 
 	}
 
-	fs.CreateDirIfNotExist(args.DocRoot)
+	fs.CreateDirIfNotExist(baseDir + string(os.PathSeparator) + args.DocRoot)
 
-	localDocRoot, _ := filepath.Abs(args.DocRoot)
+	localDocRoot, _ := filepath.Abs(baseDir + string(os.PathSeparator) + args.DocRoot)
 
 	buffer.out("Information\n")
 	buffer.out("-----------\n")
-	buffer.out("Copy for PHP file in the directory: " + localDocRoot + "\n")
-	buffer.out("Open your browser to http://" + args.Host + "\n")
+	buffer.out("Copy your files to: " + localDocRoot + "\n")
+	buffer.out("Web Server is available at http://" + args.Host + "/\n")
 	buffer.out("Web server is running ...\n")
 
 	phpServer := php.Server{
 		phpPath,
 		args.Host,
-		args.DocRoot,
+		baseDir + string(os.PathSeparator) + args.DocRoot,
 	}
 
 	phpServer.StartServer(ioChannels)

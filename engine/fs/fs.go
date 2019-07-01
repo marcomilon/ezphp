@@ -86,7 +86,7 @@ func whereIsGlobalPHP(phpExe string) (string, error) {
 func whereIsLocalPHP(phpExe string, target string) (string, error) {
 	var err error
 	absPath, _ := filepath.Abs(filepath.Dir(target))
-	localPHP := absPath + string(os.PathSeparator) + target + string(os.PathSeparator) + phpExe
+	localPHP := absPath + string(os.PathSeparator) + "7.0.0" + string(os.PathSeparator) + phpExe
 
 	logrus.Info("Searching for PHP in " + localPHP)
 
