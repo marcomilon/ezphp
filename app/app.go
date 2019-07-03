@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
 	"github.com/sirupsen/logrus"
@@ -19,72 +18,43 @@ const (
 	installDir   = "ezphp/php/7.0.0"
 )
 
-type buffer struct {
-	php.IOCom
-}
+func Start(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom) {
 
-func Start(args ezargs.Arguments, ioChannels php.IOCom) {
-
-	var phpPath string
 	var err error
 
-	installer := php.Installer{
-		downloadUrl,
-		fileName,
-		installDir,
-	}
+	ioCom.Stdout <- "EzPHP v" + ezPHPVersion + "\n"
+	ioCom.Stdout <- ezPHPWebsite + "\n"
+	ioCom.Stdout <- "\n"
 
-	buffer := buffer{
-		ioChannels,
-	}
-
-	buffer.out("EzPHP v" + ezPHPVersion + "\n")
-	buffer.out(ezPHPWebsite + "\n")
-	buffer.out("\n")
-
-	phpPath, err = fs.WhereIsPHP(installDir)
+	_, err = fs.WhereIsPHP(installDir)
 	if err != nil {
 
-		ioChannels.Confirm <- "Would you like to install PHP?"
-		result := <-ioChannels.Confirm
+		ioCom.Stdin <- "Would you like to install PHP?"
+		result := <-ioCom.Stdin
 
 		if result == "No" {
-			ioChannels.Done <- true
+			ioCom.Done <- true
 		}
 
 		logrus.Info("PHP not founded")
 
-		localPHP, _ := filepath.Abs(installDir)
+		phpInstaller.Install(ioCom)
 
-		installer.InstallPHP(ioChannels)
-
-		phpPath = localPHP + string(os.PathSeparator) + php.PHP_EXECUTABLE
-		buffer.out("\nPHP Installed succefully\n\n")
+		ioCom.Stdout <- "\nPHP Installed succefully\n\n"
 
 	}
 
-	fs.CreateDirIfNotExist(baseDir + string(os.PathSeparator) + args.DocRoot)
+	fs.CreateDirIfNotExist(baseDir + string(os.PathSeparator) + phpServer.GetDocRoot())
 
-	localDocRoot, _ := filepath.Abs(baseDir + string(os.PathSeparator) + args.DocRoot)
+	localDocRoot, _ := filepath.Abs(baseDir + string(os.PathSeparator) + phpServer.GetDocRoot())
 
-	buffer.out("Information\n")
-	buffer.out("-----------\n")
-	buffer.out("Copy your files to: " + localDocRoot + "\n")
-	buffer.out("Web Server is available at http://" + args.Host + "/\n")
-	buffer.out("Web server is running ...\n")
+	ioCom.Stdout <- "Information\n"
+	ioCom.Stdout <- "-----------\n"
+	ioCom.Stdout <- "Copy your files to: " + localDocRoot + "\n"
+	ioCom.Stdout <- "Web Server is available at http://" + phpServer.GetHost() + "/\n"
+	ioCom.Stdout <- "Web server is running ...\n"
 
-	phpServer := php.Server{
-		phpPath,
-		args.Host,
-		baseDir + string(os.PathSeparator) + args.DocRoot,
-	}
+	phpServer.Serve(ioCom)
 
-	phpServer.StartServer(ioChannels)
-
-	ioChannels.Done <- true
-}
-
-func (b buffer) out(msg string) {
-	outmsg := php.NewStdout(msg)
-	b.Outmsg <- outmsg
+	ioCom.Done <- true
 }

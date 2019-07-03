@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/marcomilon/ezphp/app"
-	"github.com/marcomilon/ezphp/engine/ezargs"
 	"github.com/marcomilon/ezphp/engine/php"
 	"github.com/sirupsen/logrus"
 )
@@ -34,18 +33,17 @@ func main() {
 
 	flag.Parse()
 
-	ezargs := ezargs.Arguments{
-		*host,
-		*docRoot,
+	ioChannels := php.IOCom{
+		make(chan string),
+		make(chan string),
+		make(chan string),
+		make(chan bool),
 	}
 
-	ioChannels := php.IOCom{
-		Outmsg:  make(chan php.IOMessage),
-		Confirm: make(chan string),
-		Done:    make(chan bool),
-	}
+	phpInstaller := php.NewPhpInstaller()
+	phpServer := php.NewPhpServer(*host, *docRoot)
 
 	go app.StartTerminal(ioChannels)
-	app.Start(ezargs, ioChannels)
+	app.Start(phpInstaller, phpServer, ioChannels)
 
 }

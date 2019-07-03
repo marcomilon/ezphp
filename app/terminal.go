@@ -13,12 +13,12 @@ func StartTerminal(ioCom php.IOCom) {
 Terminal:
 	for {
 		select {
-		case outmsg := <-ioCom.Outmsg:
-			fmt.Print(outmsg.Msg)
-		case errMsg := <-ioCom.Outmsg:
-			fmt.Print(errMsg.Msg)
-		case confirmMsg := <-ioCom.Confirm:
-			Confirm(confirmMsg, ioCom.Confirm)
+		case outmsg := <-ioCom.Stdout:
+			fmt.Print(outmsg)
+		case errMsg := <-ioCom.Stderr:
+			fmt.Print(errMsg)
+		case confirmMsg := <-ioCom.Stdin:
+			Confirm(confirmMsg, ioCom.Stdin)
 		case <-ioCom.Done:
 			byebye()
 			break Terminal
