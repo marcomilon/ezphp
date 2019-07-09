@@ -7,6 +7,11 @@ import (
 	"github.com/marcomilon/ezphp/engine/php"
 )
 
+const (
+	ezPHPVersion = "1.1.0"
+	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
+)
+
 func main() {
 
 	host := flag.String("S", "localhost:8080", "<addr>:<port> - Run with built-in web server.")
@@ -30,6 +35,11 @@ func main() {
 	phpServer := php.NewPhpServer(arguments)
 
 	go app.StartTerminal(ioChannels)
-	app.Start(phpInstaller, phpServer, ioChannels, arguments)
+
+	ioChannels.Stdout <- "EzPHP v" + ezPHPVersion + "\n"
+	ioChannels.Stdout <- ezPHPWebsite + "\n"
+	ioChannels.Stdout <- "\n"
+
+	app.StartServer(phpInstaller, phpServer, ioChannels, arguments)
 
 }

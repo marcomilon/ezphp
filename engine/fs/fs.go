@@ -48,7 +48,7 @@ func createDefaultIndex(basePath string) {
 	<div class="container">
 	<h1>Welcome to your personal web server</h1>
 		<p>
-		<?= "This file is located in: ` + absDoctRoot + `/index.php"; ?>
+		<?= "This file is located in: ` + absDoctRoot + string(os.PathSeparator) + `index.php"; ?>
 		</p>
 		<?= "Replaced it with your own file"; ?>
 		<p>

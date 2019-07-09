@@ -13,7 +13,7 @@ type Arguments struct {
 }
 
 type Installer interface {
-	Install(iocom IOCom)
+	Install(iocom IOCom) (string, error)
 }
 
 type Server interface {

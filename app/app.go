@@ -8,21 +8,13 @@ import (
 )
 
 const (
-	downloadUrl  = "https://windows.php.net/downloads/releases/archives"
-	fileName     = "php-7.0.0-Win32-VC14-x64.zip"
-	ezPHPVersion = "1.1.0"
-	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
-	installDir   = "php/7.0.0"
+	installDir = "php/7.0.0"
 )
 
-func Start(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom, arguments php.Arguments) {
+func StartServer(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom, arguments php.Arguments) {
 
 	var err error
 	var phpExe string
-
-	ioCom.Stdout <- "EzPHP v" + ezPHPVersion + "\n"
-	ioCom.Stdout <- ezPHPWebsite + "\n"
-	ioCom.Stdout <- "\n"
 
 	phpExe, err = fs.WhereIsPHP(installDir)
 	if err != nil {
@@ -34,9 +26,13 @@ func Start(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom, ar
 			ioCom.Done <- true
 		}
 
-		phpInstaller.Install(ioCom)
+		phpExe, err = phpInstaller.Install(ioCom)
+		if err != nil {
+			ioCom.Stdout <- "Unable to install PHP\n"
+			ioCom.Done <- true
+		}
 
-		ioCom.Stdout <- "\nPHP Installed succefully\n\n"
+		ioCom.Stdout <- "PHP Installed succefully\n\n"
 
 	}
 

@@ -52,15 +52,7 @@ func (s PhpServer) Serve(phpExe string, ioCom IOCom) {
 	errCmd := cmd.Run()
 
 	if errCmd != nil {
-		ioCom.Stderr <- errCmd.Error()
+		ioCom.Stderr <- "Error: " + errCmd.Error()
 		ioCom.Done <- true
 	}
-}
-
-func (s PhpServer) GetDocRoot() string {
-	return s.DocRoot
-}
-
-func (s PhpServer) GetHost() string {
-	return s.Host
 }

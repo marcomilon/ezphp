@@ -31,10 +31,10 @@ run-interactive:
 	GTK_DEBUG=interactive go run main.go -gui
 
 build-linux: clean
-	$(GOBUILD) -ldflags "-X main.DEBUG=NO" -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)
+	$(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)
 	
 build-win: format clean setup
-	GOOS=windows GOARCH=386 $(GOBUILD) -ldflags "-X main.DEBUG=NO -s -w" -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)$(BINARY_WIN)
-	##zip -r $(RELEASEDIR)/$(RELEASEFILE) $(BUILDDIR)
+	GOOS=windows GOARCH=386 $(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)$(BINARY_WIN)
+	zip -r $(RELEASEDIR)/$(RELEASEFILE) $(BUILDDIR)
 	
 release: build-win
