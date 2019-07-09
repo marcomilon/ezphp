@@ -14,7 +14,7 @@ import (
 const (
 	downloadUrl = "https://windows.php.net/downloads/releases/archives"
 	fileName    = "php-7.0.0-Win32-VC14-x64.zip"
-	installDir  = "ezphp/php/7.0.0"
+	installDir  = "php/7.0.0"
 )
 
 type PhpInstaller struct {

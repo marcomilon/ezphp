@@ -7,7 +7,6 @@ import (
 )
 
 type PhpServer struct {
-	PhpExe  string
 	Host    string
 	DocRoot string
 }
@@ -36,21 +35,20 @@ func (e errMsg) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func NewPhpServer(host string, docRoot string) PhpServer {
+func NewPhpServer(arguments Arguments) PhpServer {
 	return PhpServer{
-		PHP_EXECUTABLE,
-		host,
-		docRoot,
+		arguments.Host,
+		arguments.DocRoot,
 	}
 }
 
-func (s PhpServer) Serve(ioCom IOCom) {
-	logrus.Info("Starting web server using " + s.PhpExe + " -S " + s.Host + " -t " + s.DocRoot)
+func (s PhpServer) Serve(phpExe string, ioCom IOCom) {
+	logrus.Info("Starting web server using " + phpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
 	out := outMsg{out: ioCom.Stdout}
 	err := errMsg{err: ioCom.Stdout}
 
-	cmd := exec.Command(s.PhpExe, "-S", s.Host, "-t", s.DocRoot)
+	cmd := exec.Command(phpExe, "-S", s.Host, "-t", s.DocRoot)
 	cmd.Stdout = out
 	cmd.Stderr = err
 

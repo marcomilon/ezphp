@@ -22,7 +22,7 @@ clean:
 	$(GOCLEAN)
 	rm -rf $(RELEASE_NAME) $(BUILDDIR)
 	rm -rf public_html
-	rm -rf localPHP
+	rm -rf php
 
 format:
 	goimports -w -d $(GOFILES)

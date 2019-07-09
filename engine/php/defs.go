@@ -7,12 +7,15 @@ type IOCom struct {
 	Done   chan bool
 }
 
+type Arguments struct {
+	Host    string
+	DocRoot string
+}
+
 type Installer interface {
 	Install(iocom IOCom)
 }
 
 type Server interface {
-	Serve(iocom IOCom)
-	GetDocRoot() string
-	GetHost() string
+	Serve(phpExe string, iocom IOCom)
 }

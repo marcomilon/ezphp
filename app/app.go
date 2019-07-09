@@ -1,7 +1,6 @@
 package app
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/marcomilon/ezphp/engine/fs"
@@ -14,19 +13,19 @@ const (
 	fileName     = "php-7.0.0-Win32-VC14-x64.zip"
 	ezPHPVersion = "1.1.0"
 	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
-	baseDir      = "ezphp"
-	installDir   = "ezphp/php/7.0.0"
+	installDir   = "php/7.0.0"
 )
 
-func Start(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom) {
+func Start(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom, arguments php.Arguments) {
 
 	var err error
+	var phpExe string
 
 	ioCom.Stdout <- "EzPHP v" + ezPHPVersion + "\n"
 	ioCom.Stdout <- ezPHPWebsite + "\n"
 	ioCom.Stdout <- "\n"
 
-	_, err = fs.WhereIsPHP(installDir)
+	phpExe, err = fs.WhereIsPHP(installDir)
 	if err != nil {
 
 		ioCom.Stdin <- "Would you like to install PHP?"
@@ -44,17 +43,17 @@ func Start(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom) {
 
 	}
 
-	fs.CreateDirIfNotExist(baseDir + string(os.PathSeparator) + phpServer.GetDocRoot())
+	fs.CreateDirIfNotExist(arguments.DocRoot)
 
-	localDocRoot, _ := filepath.Abs(baseDir + string(os.PathSeparator) + phpServer.GetDocRoot())
+	localDocRoot, _ := filepath.Abs(arguments.DocRoot)
 
 	ioCom.Stdout <- "Information\n"
 	ioCom.Stdout <- "-----------\n"
 	ioCom.Stdout <- "Copy your files to: " + localDocRoot + "\n"
-	ioCom.Stdout <- "Web Server is available at http://" + phpServer.GetHost() + "/\n"
+	ioCom.Stdout <- "Web Server is available at http://" + arguments.Host + "/\n"
 	ioCom.Stdout <- "Web server is running ...\n"
 
-	phpServer.Serve(ioCom)
+	phpServer.Serve(phpExe, ioCom)
 
 	ioCom.Done <- true
 }

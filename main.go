@@ -40,10 +40,15 @@ func main() {
 		make(chan bool),
 	}
 
+	arguments := php.Arguments{
+		*host,
+		*docRoot,
+	}
+
 	phpInstaller := php.NewPhpInstaller()
-	phpServer := php.NewPhpServer(*host, *docRoot)
+	phpServer := php.NewPhpServer(arguments)
 
 	go app.StartTerminal(ioChannels)
-	app.Start(phpInstaller, phpServer, ioChannels)
+	app.Start(phpInstaller, phpServer, ioChannels, arguments)
 
 }
