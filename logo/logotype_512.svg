@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X7 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="43.3492mm" height="11.9378mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 4335 1194"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:#AC08C9}
+    .fil1 {fill:#AC08C9;fill-rule:nonzero}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_870107648">
+   <g>
+    <path class="fil0" d="M32 -1l1453 0 -299 299 -1154 0c-17,0 -31,-14 -31,-31l0 -237c0,-17 14,-31 31,-31z"/>
+    <path class="fil0" d="M32 896l557 0 -299 299 -258 0c-17,0 -31,-14 -31,-31l0 -237c0,-17 14,-31 31,-31zm768 0l685 0 -299 299 -685 0 299 -299z"/>
+    <path class="fil0" d="M181 447l856 0 -299 299 -557 0c-17,0 -31,-14 -31,-31l0 -237c0,-17 14,-31 31,-31z"/>
+   </g>
+   <polygon class="fil1" points="2067,903 2067,290 2409,290 2409,375 2166,375 2166,529 2409,529 2409,616 2166,616 2166,814 2409,814 2409,903 "/>
+   <polygon class="fil1" points="2821,903 2452,903 2673,586 2474,586 2474,506 2821,506 2604,824 2821,824 "/>
+   <path class="fil1" d="M3008 547l25 0c56,0 93,-6 111,-18 18,-12 28,-33 28,-64 0,-32 -10,-55 -30,-69 -20,-13 -56,-20 -109,-20l-25 0 0 171zm-6 81l0 275 -94 0 0 -613 151 0c45,0 78,3 99,8 21,5 39,13 55,24 19,14 34,33 45,57 11,24 16,51 16,80 0,29 -5,56 -16,80 -11,25 -26,44 -45,58 -16,11 -34,19 -55,24 -21,5 -54,7 -99,7l-20 0 -37 0z"/>
+   <polygon class="fil1" points="3365,903 3365,290 3464,290 3464,517 3766,517 3766,290 3865,290 3865,903 3766,903 3766,606 3464,606 3464,903 "/>
+   <path class="fil1" d="M4068 547l25 0c56,0 92,-6 111,-18 18,-12 27,-33 27,-64 0,-32 -9,-55 -29,-69 -20,-13 -56,-20 -109,-20l-25 0 0 171zm-6 81l0 275 -94 0 0 -613 151 0c45,0 77,3 99,8 21,5 39,13 55,24 19,14 34,33 45,57 11,24 16,51 16,80 0,29 -5,56 -16,80 -11,25 -26,44 -45,58 -16,11 -34,19 -55,24 -22,5 -54,7 -99,7l-20 0 -37 0z"/>
+  </g>
+ </g>
+</svg>
