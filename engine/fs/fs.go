@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/marcomilon/ezphp/engine/php"
-	"github.com/sirupsen/logrus"
 )
 
 func CreateDirIfNotExist(dir string) error {
@@ -23,11 +22,9 @@ func CreateDirIfNotExist(dir string) error {
 }
 
 func createDefaultIndex(basePath string) {
-	logrus.Info("Creating default index.php in directory: " + basePath)
 
 	file, err := os.Create(basePath + string(os.PathSeparator) + "index.php")
 	if err != nil {
-		logrus.Error("Cannot create default index.php:  " + err.Error())
 		return
 	}
 
@@ -79,7 +76,6 @@ func WhereIsPHP(installDir string) (string, error) {
 }
 
 func whereIsGlobalPHP(phpExe string) (string, error) {
-	logrus.Info("Searching for PHP in $PATH")
 	return exec.LookPath(phpExe)
 }
 
@@ -87,8 +83,6 @@ func whereIsLocalPHP(phpExe string, target string) (string, error) {
 	var err error
 	absPath, _ := filepath.Abs(filepath.Dir(target))
 	localPHP := absPath + string(os.PathSeparator) + "7.0.0" + string(os.PathSeparator) + phpExe
-
-	logrus.Info("Searching for PHP in " + localPHP)
 
 	if _, err = os.Stat(localPHP); !os.IsNotExist(err) {
 		return localPHP, nil

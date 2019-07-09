@@ -2,8 +2,6 @@ package php
 
 import (
 	"os/exec"
-
-	"github.com/sirupsen/logrus"
 )
 
 type PhpServer struct {
@@ -43,7 +41,6 @@ func NewPhpServer(arguments Arguments) PhpServer {
 }
 
 func (s PhpServer) Serve(phpExe string, ioCom IOCom) {
-	logrus.Info("Starting web server using " + phpExe + " -S " + s.Host + " -t " + s.DocRoot)
 
 	out := outMsg{out: ioCom.Stdout}
 	err := errMsg{err: ioCom.Stdout}

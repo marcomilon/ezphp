@@ -8,7 +8,6 @@ import (
 
 	"github.com/cavaliercoder/grab"
 	"github.com/mholt/archiver"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -43,14 +42,12 @@ func (i PhpInstaller) Install(ioCom IOCom) {
 
 	_, err = i.download(ioCom)
 	if err != nil {
-		logrus.Error("Error downloading file " + err.Error())
 		ioCom.Stderr <- err.Error()
 		return
 	}
 
 	err = i.unzip()
 	if err != nil {
-		logrus.Error("Error unzipping file " + err.Error())
 		ioCom.Stderr <- err.Error()
 		return
 	}
@@ -58,7 +55,6 @@ func (i PhpInstaller) Install(ioCom IOCom) {
 }
 
 func (i PhpInstaller) download(ioCom IOCom) (*grab.Response, error) {
-	logrus.Info("Downloading PHP from " + i.downloadUrl + "/" + i.filename)
 	client := grab.NewClient()
 	req, _ := grab.NewRequest(i.installDir+string(os.PathSeparator)+i.filename, i.downloadUrl+"/"+i.filename)
 	resp := client.Do(req)
@@ -87,7 +83,6 @@ Loop:
 }
 
 func (i PhpInstaller) unzip() error {
-	logrus.Info("Unziping local PHP installation: " + i.installDir + string(os.PathSeparator) + i.filename)
 	err := archiver.Unarchive(i.installDir+string(os.PathSeparator)+i.filename, i.installDir)
 	if err != nil {
 		return err

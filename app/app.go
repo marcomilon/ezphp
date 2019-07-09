@@ -5,7 +5,6 @@ import (
 
 	"github.com/marcomilon/ezphp/engine/fs"
 	"github.com/marcomilon/ezphp/engine/php"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -34,8 +33,6 @@ func Start(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOCom, ar
 		if result == "No" {
 			ioCom.Done <- true
 		}
-
-		logrus.Info("PHP not founded")
 
 		phpInstaller.Install(ioCom)
 

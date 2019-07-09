@@ -2,29 +2,10 @@ package main
 
 import (
 	"flag"
-	"log"
-	"os"
 
 	"github.com/marcomilon/ezphp/app"
 	"github.com/marcomilon/ezphp/engine/php"
-	"github.com/sirupsen/logrus"
 )
-
-var DEBUG = "YES"
-
-func init() {
-
-	file, err := os.OpenFile("ezphp.log", os.O_CREATE|os.O_WRONLY, 0644)
-
-	if err != nil {
-		log.Println("Unable to start EzPHP")
-		log.Fatal(err)
-	}
-
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetOutput(os.Stdout)
-	logrus.SetOutput(file)
-}
 
 func main() {
 
