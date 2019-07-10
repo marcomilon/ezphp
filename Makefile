@@ -30,10 +30,11 @@ format:
 run-interactive: 
 	GTK_DEBUG=interactive go run main.go -gui
 
-build-linux: clean
+build-linux: format clean
 	$(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)
 	
 build-win: format clean setup
+	rsrc -manifest main.exe.manifest -ico logo/512px.ico -o rsrc.syso
 	GOOS=windows GOARCH=386 $(GOBUILD) -o $(APP_NAME).go -o $(RELEASEDIR)/$(RELEASE_NAME)$(BINARY_WIN)
 	zip -r $(RELEASEDIR)/$(RELEASEFILE) $(BUILDDIR)
 	

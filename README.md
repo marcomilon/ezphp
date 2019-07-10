@@ -1,6 +1,6 @@
 ![EzPHP](logo/logotype.png "EzPHP")
 
-EzPHP give you a personal PHP webserver for development. 
+EzPHP gives you a personal PHP webserver for development. 
 
 The goal of the project is to provide a single .exe file that will get you a ready to use PHP development environment.
 
