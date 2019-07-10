@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	ezPHPVersion = "1.1.0"
+	ezPHPVersion = "1.2.0"
 	ezPHPWebsite = "https://github.com/marcomilon/ezphp"
 )
 
