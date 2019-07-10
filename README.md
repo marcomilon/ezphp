@@ -8,7 +8,7 @@ The goal of the project is to provide a single .exe file that will get you a rea
 
 ### Installation
 
-1. Download [ezphp.exe](https://github.com/marcomilon/ezphp/releases/tag/1.2.0/ezphp.zip).
+1. Download [ezphp.zip](https://github.com/marcomilon/ezphp/releases/download/1.2.0/ezphp.zip).
 2. Create a new folder for your project and copy ezphp.exe.
 3. Run ezphp.exe. If PHP is not installed locally ezphp will try to download and install PHP.
 4. Open your browser in http://localhost:8080. 
