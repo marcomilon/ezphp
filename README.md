@@ -45,7 +45,7 @@ In case you need it you can download it from https://www.microsoft.com/en-us/dow
 
 EzPHP is open source. Feel free to contribute! Just create a new issue or a new pull request.
 
-Thanks [mirzazulfan](https://github.com/mirzazulfan) for the logo
+Thanks [mirzazulfan](https://github.com/mirzazulfan) for the logo.
 
 ### License
 
