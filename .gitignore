@@ -3,5 +3,3 @@ ezphp.exe
 public_html
 ezphp.log
 vendor
-!engine/php/
-php
