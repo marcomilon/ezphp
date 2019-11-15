@@ -46,7 +46,7 @@ func (i PhpInstaller) Install(ioCom IOCom) (string, error) {
 		return "", err
 	}
 
-	ioCom.Stdout <- "Installing PHP v7.0.0 in your local directory: " + localinstallDir + "\n"
+	ioCom.Stdout <- "Installing PHP v" + version + " in your local directory: " + localinstallDir + "\n"
 
 	err = i.unzip()
 	if err != nil {
@@ -91,10 +91,5 @@ Loop:
 }
 
 func (i PhpInstaller) unzip() error {
-	err := archiver.Unarchive(i.installDir+string(os.PathSeparator)+i.filename, i.installDir)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return archiver.Unarchive(i.installDir+string(os.PathSeparator)+i.filename, i.installDir)
 }

@@ -17,22 +17,27 @@ func StartServer(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOC
 	var phpExe string
 
 	phpExe, err = fs.WhereIsPHP(installDir)
+
+	if err == nil {
+
+		ioCom.Stdout <- "PHP found in " + phpExe
+
+	} else {
+
+	ioCom.Stdin <- "Would you like to install PHP?"
+	result := <-ioCom.Stdin
+
+	if result == "No" {
+		ioCom.Done <- true
+	}
+
+	phpExe, err = phpInstaller.Install(ioCom)
 	if err != nil {
+		ioCom.Stdout <- "Unable to install PHP\n"
+		ioCom.Done <- true
+	}
 
-		ioCom.Stdin <- "Would you like to install PHP?"
-		result := <-ioCom.Stdin
-
-		if result == "No" {
-			ioCom.Done <- true
-		}
-
-		phpExe, err = phpInstaller.Install(ioCom)
-		if err != nil {
-			ioCom.Stdout <- "Unable to install PHP\n"
-			ioCom.Done <- true
-		}
-
-		ioCom.Stdout <- "PHP Installed succefully\n\n"
+	ioCom.Stdout <- "PHP Installed succefully"
 
 	}
 
@@ -40,6 +45,7 @@ func StartServer(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOC
 
 	localDocRoot, _ := filepath.Abs(arguments.DocRoot)
 
+	ioCom.Stdout <- "\n\n"
 	ioCom.Stdout <- "Information\n"
 	ioCom.Stdout <- "-----------\n"
 	ioCom.Stdout <- "Copy your files to: " + localDocRoot + "\n"
