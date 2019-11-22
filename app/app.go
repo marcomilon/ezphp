@@ -33,7 +33,7 @@ func StartServer(phpInstaller php.Installer, phpServer php.Server, ioCom php.IOC
 			ioCom.Done <- true
 		}
 
-		ioCom.Stdout <- "PHP Installed succefully"
+		ioCom.Stdout <- "PHP Installed succefully\n\n"
 
 	}
 

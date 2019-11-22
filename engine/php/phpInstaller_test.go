@@ -1,6 +1,8 @@
 package php
 
 import (
+	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 	"testing"
@@ -9,10 +11,10 @@ import (
 func TestUnzip(t *testing.T) {
 
 	osSeparator := string(os.PathSeparator)
-	pathZip := "unzip" + string(os.PathSeparator) + "ziptest"
-	pathText1 := "unzip" + osSeparator + "ziptest" + osSeparator + "text1.txt"
-	pathText2 := "unzip" + osSeparator + "ziptest" + osSeparator + "text2.txt"
-	pathText3 := "unzip" + osSeparator + "ziptest" + osSeparator + "folder" + osSeparator + "text3.txt"
+	pathZip := "test" + osSeparator + "unzip" + osSeparator + "ziptest"
+	pathText1 := pathZip + osSeparator + "text1.txt"
+	pathText2 := pathZip + osSeparator + "text2.txt"
+	pathText3 := pathZip + osSeparator + "folder" + osSeparator + "text3.txt"
 
 	if err := clearDir(pathZip); err != nil {
 		t.Errorf("expected %v; got %v", nil, err)
@@ -21,7 +23,7 @@ func TestUnzip(t *testing.T) {
 	installer := PhpInstaller{
 		"http://download.com",
 		"ziptest.zip",
-		"unzip",
+		"test/unzip",
 	}
 
 	err := installer.unzip()
@@ -41,6 +43,54 @@ func TestUnzip(t *testing.T) {
 		t.Errorf("expected %v; got %v", nil, err)
 	}
 
+}
+
+func TestDownload(t *testing.T) {
+
+	osSeparator := string(os.PathSeparator)
+	pathDownload := "test" + osSeparator + "download" + osSeparator + "ziptest.zip"
+
+	os.Remove(pathDownload)
+
+	fs := http.FileServer(http.Dir("test/unzip"))
+	http.Handle("/", fs)
+
+	go http.ListenAndServe(":3031", nil)
+
+	installer := PhpInstaller{
+		"http://localhost:3031",
+		"ziptest.zip",
+		"test/download",
+	}
+
+	ioCom := IOCom{
+		make(chan string),
+		make(chan string),
+		make(chan string),
+		make(chan bool),
+	}
+
+	go func(ioCom IOCom) {
+	Terminal:
+		for {
+			select {
+			case outmsg := <-ioCom.Stdout:
+				fmt.Print(outmsg)
+			case <-ioCom.Done:
+				break Terminal
+			}
+		}
+	}(ioCom)
+
+	err := installer.download(ioCom)
+	if err != nil {
+		t.Errorf("expected %v; got %v", nil, err)
+	}
+	ioCom.Done <- true
+
+	if _, err := os.Stat(pathDownload); os.IsNotExist(err) {
+		t.Errorf("expected %v; got %v", nil, err)
+	}
 }
 
 func clearDir(dir string) error {

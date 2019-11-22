@@ -4,11 +4,9 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
-	"time"
-
-	"github.com/cavaliercoder/grab"
 )
 
 const (
@@ -22,6 +20,22 @@ type PhpInstaller struct {
 	downloadUrl string
 	filename    string
 	installDir  string
+}
+
+type WriteCounter struct {
+	total  int64
+	length int64
+	ioCom  IOCom
+}
+
+func (wc *WriteCounter) Write(p []byte) (int, error) {
+	n := len(p)
+	wc.total += int64(n)
+
+	percentage := float64(wc.total) / float64(wc.length) * float64(100)
+
+	wc.ioCom.Stdout <- fmt.Sprintf("\rDownload in progress: %.2f%%", percentage)
+	return n, nil
 }
 
 func NewPhpInstaller() PhpInstaller {
@@ -41,9 +55,9 @@ func (i PhpInstaller) Install(ioCom IOCom) (string, error) {
 	ioCom.Stdout <- "Downloading PHP from: " + i.downloadUrl + "/" + i.filename + "\n"
 	ioCom.Stdout <- "Please wait...\n"
 
-	_, err = i.download(ioCom)
+	err = i.download(ioCom)
 	if err != nil {
-		ioCom.Stderr <- "Error: " + err.Error() + "\n"
+		ioCom.Stderr <- "Download error: " + err.Error() + "\n"
 		return "", err
 	}
 
@@ -59,36 +73,70 @@ func (i PhpInstaller) Install(ioCom IOCom) (string, error) {
 
 }
 
-func (i PhpInstaller) download(ioCom IOCom) (*grab.Response, error) {
-	client := grab.NewClient()
-	req, err := grab.NewRequest(i.installDir+string(os.PathSeparator)+i.filename, i.downloadUrl+"/"+i.filename)
-	if err != nil {
-		return nil, err
-	}
+func (i PhpInstaller) download(ioCom IOCom) error {
 
-	resp := client.Do(req)
-	t := time.NewTicker(100 * time.Millisecond)
-	defer t.Stop()
-
-Loop:
-	for {
-		select {
-		case <-t.C:
-			ioCom.Stdout <- fmt.Sprintf("\rDownload in progress: %.2f%%", 100*resp.Progress())
-
-		case <-resp.Done:
-			break Loop
+	if _, err := os.Stat(i.installDir); os.IsNotExist(err) {
+		err = os.MkdirAll(i.installDir, 0755)
+		if err != nil {
+			return err
 		}
-
 	}
 
-	if err := resp.Err(); err != nil {
-		return nil, resp.Err()
+	out, err := os.Create(i.installDir + string(os.PathSeparator) + i.filename)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	resp, err := http.Get(i.downloadUrl + "/" + i.filename)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	counter := &WriteCounter{
+		0,
+		resp.ContentLength,
+		ioCom,
 	}
 
-	ioCom.Stdout <- fmt.Sprint("\rDownload in progress: 100%  \n")
+	_, err = io.Copy(out, io.TeeReader(resp.Body, counter))
+	if err != nil {
+		return err
+	}
 
-	return resp, nil
+	ioCom.Stdout <- "\n"
+
+	return nil
+	// 	client := grab.NewClient()
+	// 	req, err := grab.NewRequest(i.installDir+string(os.PathSeparator)+i.filename, i.downloadUrl+"/"+i.filename)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	//
+	// 	resp := client.Do(req)
+	// 	t := time.NewTicker(100 * time.Millisecond)
+	// 	defer t.Stop()
+	//
+	// Loop:
+	// 	for {
+	// 		select {
+	// 		case <-t.C:
+	// 			ioCom.Stdout <- fmt.Sprintf("\rDownload in progress: %.2f%%", 100*resp.Progress())
+	//
+	// 		case <-resp.Done:
+	// 			break Loop
+	// 		}
+	//
+	// 	}
+	//
+	// 	if err := resp.Err(); err != nil {
+	// 		return nil, resp.Err()
+	// 	}
+	//
+	// 	ioCom.Stdout <- fmt.Sprint("\rDownload in progress: 100%  \n")
+	//
+	// 	return resp, nil
 }
 
 func (i PhpInstaller) unzip() error {
