@@ -9,83 +9,9 @@
   revision = "2c8601de6d9ac140430fd4c9de28509a0b855af5"
   version = "v2.0.0"
 
-[[projects]]
-  branch = "master"
-  digest = "1:988cfde37f089c50ba1ac8a1032c3f81d2ac0359e1872093b946a30139665eb6"
-  name = "github.com/dsnet/compress"
-  packages = [
-    ".",
-    "bzip2",
-    "bzip2/internal/sais",
-    "internal",
-    "internal/errors",
-    "internal/prefix",
-  ]
-  pruneopts = "UT"
-  revision = "cc9eb1d7ad760af14e8f918698f745e80377af4f"
-
-[[projects]]
-  branch = "master"
-  digest = "1:4a0c6bb4805508a6287675fac876be2ac1182539ca8a32468d8128882e9d5009"
-  name = "github.com/golang/snappy"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
-
-[[projects]]
-  digest = "1:67b3e2eb7a5bcfe8374b617315f1a8dfdff3c131a451eb2c01664790ef6dd4e6"
-  name = "github.com/mholt/archiver"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "d572b2e8b82726cee9476d1b9d63a7fe9b601ff1"
-  version = "v3.1.1"
-
-[[projects]]
-  digest = "1:b93a939355dc613ca1c23bf39f6d4c207da431a31dd8af001cc334ad24cab9d3"
-  name = "github.com/nwaples/rardecode"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "cc3e4b2381762c56dbcdf9f93be03349a1dc1c14"
-  version = "v1.0.0"
-
-[[projects]]
-  digest = "1:e39a5ee8fcbec487f8fc68863ef95f2b025e0739b0e4aa55558a2b4cf8f0ecf0"
-  name = "github.com/pierrec/lz4"
-  packages = [
-    ".",
-    "internal/xxh32",
-  ]
-  pruneopts = "UT"
-  revision = "635575b42742856941dbc767b44905bb9ba083f6"
-  version = "v2.0.7"
-
-[[projects]]
-  digest = "1:db345c377984d0907323c09a9b17f11d995a59649fd38f909727df358b5f9020"
-  name = "github.com/ulikunitz/xz"
-  packages = [
-    ".",
-    "internal/hash",
-    "internal/xlog",
-    "lzma",
-  ]
-  pruneopts = "UT"
-  revision = "590df8077fbcb06ad62d7714da06c00e5dd2316d"
-  version = "v0.5.5"
-
-[[projects]]
-  branch = "master"
-  digest = "1:0dfba983988bcd90e6dd30b9bfdb9685ff530dbf61db3706e55372e975b1d8bc"
-  name = "github.com/xi2/xz"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "48954b6210f8d154cb5f8484d3a3e1f83489309e"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = [
-    "github.com/cavaliercoder/grab",
-    "github.com/mholt/archiver",
-  ]
+  input-imports = ["github.com/cavaliercoder/grab"]
   solver-name = "gps-cdcl"
   solver-version = 1
