@@ -26,6 +26,9 @@ clean:
 
 format:
 	goimports -w -d $(GOFILES)
+	
+test:
+	go test -cover ./...
 
 run-interactive: 
 	GTK_DEBUG=interactive go run main.go -gui
