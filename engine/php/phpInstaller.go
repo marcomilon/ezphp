@@ -108,35 +108,6 @@ func (i PhpInstaller) download(ioCom IOCom) error {
 	ioCom.Stdout <- "\n"
 
 	return nil
-	// 	client := grab.NewClient()
-	// 	req, err := grab.NewRequest(i.installDir+string(os.PathSeparator)+i.filename, i.downloadUrl+"/"+i.filename)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	//
-	// 	resp := client.Do(req)
-	// 	t := time.NewTicker(100 * time.Millisecond)
-	// 	defer t.Stop()
-	//
-	// Loop:
-	// 	for {
-	// 		select {
-	// 		case <-t.C:
-	// 			ioCom.Stdout <- fmt.Sprintf("\rDownload in progress: %.2f%%", 100*resp.Progress())
-	//
-	// 		case <-resp.Done:
-	// 			break Loop
-	// 		}
-	//
-	// 	}
-	//
-	// 	if err := resp.Err(); err != nil {
-	// 		return nil, resp.Err()
-	// 	}
-	//
-	// 	ioCom.Stdout <- fmt.Sprint("\rDownload in progress: 100%  \n")
-	//
-	// 	return resp, nil
 }
 
 func (i PhpInstaller) unzip() error {
