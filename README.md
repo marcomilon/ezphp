@@ -1,4 +1,4 @@
-![EzPHP](logo/logotype.png "EzPHP")
+![EzPHP](assets/logotype.png "EzPHP")
 
 EzPHP gives you a personal PHP webserver for development. 
 
