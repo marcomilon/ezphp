@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/marcomilon/ezphp/engine/fs/docroot"
+	"github.com/marcomilon/ezphp/internal/fs/docroot"
 )
 
 var path string = os.TempDir() + "ezphptest"

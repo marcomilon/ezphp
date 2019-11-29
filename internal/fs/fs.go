@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/marcomilon/ezphp/engine/php"
+	"github.com/marcomilon/ezphp/internal/php"
 )
 
 func CreateDirIfNotExist(dir string) error {

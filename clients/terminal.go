@@ -1,4 +1,4 @@
-package app
+package clients
 
 import (
 	"bufio"
@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/marcomilon/ezphp/engine/php"
+	"github.com/marcomilon/ezphp/internal/php"
 )
 
 func StartTerminal(ioCom php.IOCom) {

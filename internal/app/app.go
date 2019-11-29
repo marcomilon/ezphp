@@ -3,8 +3,8 @@ package app
 import (
 	"path/filepath"
 
-	"github.com/marcomilon/ezphp/engine/fs"
-	"github.com/marcomilon/ezphp/engine/php"
+	"github.com/marcomilon/ezphp/internal/fs"
+	"github.com/marcomilon/ezphp/internal/php"
 )
 
 const (

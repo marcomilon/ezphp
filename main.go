@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 
-	"github.com/marcomilon/ezphp/app"
-	"github.com/marcomilon/ezphp/engine/php"
+	"github.com/marcomilon/ezphp/clients"
+	"github.com/marcomilon/ezphp/internal/app"
+	"github.com/marcomilon/ezphp/internal/php"
 )
 
 const (
@@ -34,7 +35,7 @@ func main() {
 	phpInstaller := php.NewPhpInstaller()
 	phpServer := php.NewPhpServer(arguments)
 
-	go app.StartTerminal(ioChannels)
+	go clients.StartTerminal(ioChannels)
 
 	ioChannels.Stdout <- "EzPHP v" + ezPHPVersion + "\n"
 	ioChannels.Stdout <- ezPHPWebsite + "\n"
