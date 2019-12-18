@@ -10,6 +10,12 @@ import (
 	"path/filepath"
 )
 
+// Installer define the source url and the destionation folder
+type Installer struct {
+	Source      string
+	Destination string
+}
+
 type progressBar struct {
 	total  int64
 	length int64
@@ -26,13 +32,14 @@ func (pb *progressBar) Write(p []byte) (int, error) {
 	return n, nil
 }
 
-func (ioCom IOCom) Install(source, destination string) error {
-	zipfile, err := download(ioCom, source, destination)
+// Install tries to download php from source url and install it on the destination folder
+func (i Installer) Install(ioCom IOCom) error {
+	zipfile, err := download(i.Source, i.Destination, ioCom)
 	if err != nil {
 		return err
 	}
 
-	err = unzip(zipfile, destination)
+	err = unzip(zipfile, i.Destination)
 	if err != nil {
 		return err
 	}
@@ -109,7 +116,7 @@ func unzip(source, destination string) error {
 	return nil
 }
 
-func download(ioCom IOCom, source, destination string) (string, error) {
+func download(source, destination string, ioCom IOCom) (string, error) {
 
 	filename := path.Base(source)
 

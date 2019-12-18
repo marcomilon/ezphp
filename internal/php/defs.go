@@ -12,10 +12,10 @@ type Arguments struct {
 	DocRoot string
 }
 
-type Installer interface {
-	Install(iocom IOCom) (string, error)
+type Install interface {
+	Install(iocom IOCom) error
 }
 
-type Server interface {
-	Serve(phpExe string, iocom IOCom)
+type Serve interface {
+	Serve(iocom IOCom)
 }

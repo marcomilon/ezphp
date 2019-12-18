@@ -1,4 +1,4 @@
-package docroot_test
+package php_test
 
 import (
 	"io/ioutil"
@@ -6,17 +6,21 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/marcomilon/ezphp/internal/fs/docroot"
+	"github.com/marcomilon/ezphp/internal/php"
 )
 
-var path string = os.TempDir() + "ezphptest"
+var path string = os.TempDir() + "ezphptest" + string(os.PathSeparator) + "docroot"
 
 func TestCreate(t *testing.T) {
 
 	setup(t)
 
-	err := docroot.Create(path)
+	err := php.Create(path)
 	if err != nil {
+		t.Errorf("expected %v; got %v", nil, err)
+	}
+
+	if _, err := os.Stat(path); err != nil {
 		t.Errorf("expected %v; got %v", nil, err)
 	}
 }
@@ -27,13 +31,13 @@ func TestExists(t *testing.T) {
 
 	var exists bool
 
-	exists = docroot.Exists(path)
+	exists = php.Exists(path)
 	if exists {
 		t.Errorf("expected %v; got %v", false, exists)
 	}
 
 	os.MkdirAll(path, 0755)
-	exists = docroot.Exists(path)
+	exists = php.Exists(path)
 	if !exists {
 		t.Errorf("expected %v; got %v", true, exists)
 	}
@@ -50,7 +54,7 @@ func TestCreateIndex(t *testing.T) {
 
 	template := `index`
 
-	err := docroot.CreateIndex(pathIndex, template)
+	err := php.CreateIndex(pathIndex, template)
 	if err != nil {
 		t.Errorf("expected %v; got %v", nil, err)
 	}

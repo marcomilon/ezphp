@@ -4,7 +4,9 @@ import (
 	"os/exec"
 )
 
-type PhpServer struct {
+// Server holds the information for the php server
+type Server struct {
+	Exec    string
 	Host    string
 	DocRoot string
 }
@@ -33,19 +35,13 @@ func (e errMsg) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func NewPhpServer(arguments Arguments) PhpServer {
-	return PhpServer{
-		arguments.Host,
-		arguments.DocRoot,
-	}
-}
-
-func (s PhpServer) Serve(phpExe string, ioCom IOCom) {
+// Serve start a php server
+func (s Server) Serve(ioCom IOCom) {
 
 	out := outMsg{out: ioCom.Stdout}
 	err := errMsg{err: ioCom.Stdout}
 
-	cmd := exec.Command(phpExe, "-S", s.Host, "-t", s.DocRoot)
+	cmd := exec.Command(s.Exec, "-S", s.Host, "-t", s.DocRoot)
 	cmd.Stdout = out
 	cmd.Stderr = err
 
@@ -55,4 +51,7 @@ func (s PhpServer) Serve(phpExe string, ioCom IOCom) {
 		ioCom.Stderr <- "Error: " + errCmd.Error()
 		ioCom.Done <- true
 	}
+
+	ioCom.Done <- true
+
 }
