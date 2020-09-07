@@ -4,7 +4,7 @@ import (
 	"flag"
 
 	"github.com/marcomilon/ezphp/clients"
-	"github.com/marcomilon/ezphp/internal/app"
+	"github.com/marcomilon/ezphp/ezphp"
 	"github.com/marcomilon/ezphp/internal/php"
 )
 
@@ -27,20 +27,23 @@ func main() {
 		make(chan bool),
 	}
 
-	arguments := php.Arguments{
-		*host,
-		*docRoot,
+	go clients.StartTerminal(ioChannels)
+
+	instl := php.Installer{
+		Source:      "https://windows.php.net/downloads/releases/php-7.4.10-nts-Win32-vc15-x64.zip",
+		Destination: "php",
 	}
 
-	phpInstaller := php.NewPhpInstaller()
-	phpServer := php.NewPhpServer(arguments)
-
-	go clients.StartTerminal(ioChannels)
+	srv := php.Server{
+		Exec:    "php/php.exe",
+		Host:    *host,
+		DocRoot: *docRoot,
+	}
 
 	ioChannels.Stdout <- "EzPHP v" + ezPHPVersion + "\n"
 	ioChannels.Stdout <- ezPHPWebsite + "\n"
 	ioChannels.Stdout <- "\n"
 
-	app.StartServer(phpInstaller, phpServer, ioChannels, arguments)
+	ezphp.Start(srv, instl, ioChannels)
 
 }

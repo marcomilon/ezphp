@@ -35,4 +35,12 @@ func Start(srv php.Server, instl php.Installer, ioCom php.IOCom) {
 
 	}
 
+	ioCom.Stdout <- "Information\n"
+	ioCom.Stdout <- "-----------\n"
+	ioCom.Stdout <- "Web server is running ...\n"
+
+	srv.Serve(ioCom)
+
+	ioCom.Done <- true
+
 }

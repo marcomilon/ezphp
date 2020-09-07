@@ -27,7 +27,7 @@ func FindPHP(srv Server) (string, error) {
 	}
 
 	localPHP := absPath + string(os.PathSeparator) + path.Base(srv.Exec)
-	//fmt.Printf("%v \n", localPHP)
+
 	if _, err = os.Stat(localPHP); os.IsNotExist(err) {
 		return "", err
 	}
