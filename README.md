@@ -2,9 +2,9 @@
 
 EzPHP gives you a personal PHP webserver for development. 
 
-The goal of the project is to provide a single .exe file that will get you a ready to use PHP development environment.
+The goal of the project is to provide a single **.exe** file that will get you a ready to use PHP development environment.
 
-![EzPHP](ezphp.png)
+EzPHP will install PHP v. 7.4.10 downloaded from https://windows.php.net/downloads/releases/php-7.4.10-nts-Win32-vc15-x64.zip
 
 ### Installation
 
