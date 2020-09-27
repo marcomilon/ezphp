@@ -2,24 +2,19 @@ package php
 
 import (
 	"archive/zip"
+	"bufio"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
-
-// Installer define the source url and the destionation folder
-type Installer struct {
-	Source      string
-	Destination string
-}
 
 type progressBar struct {
 	total  int64
 	length int64
-	ioCom  IOCom
 }
 
 func (pb *progressBar) Write(p []byte) (int, error) {
@@ -28,26 +23,88 @@ func (pb *progressBar) Write(p []byte) (int, error) {
 
 	percentage := float64(pb.total) / float64(pb.length) * float64(100)
 
-	pb.ioCom.Stdout <- fmt.Sprintf("\rDownload in progress: %.2f%%", percentage)
+	fmt.Printf("\rDownload in progress: %.2f%%", percentage)
 	return n, nil
 }
 
-// Install tries to download php from source url and install it on the destination folder
-func (i Installer) Install(ioCom IOCom) error {
-	zipfile, err := download(i.Source, i.Destination, ioCom)
-	if err != nil {
-		return err
+func FastInstall(source, installFolder string) (string, error) {
+
+	var confirmation string
+
+	fmt.Print("Would you like to install PHP version 7.4.10? [y/N] ")
+	fmt.Scanln(&confirmation)
+
+	confirmation = strings.TrimSpace(confirmation)
+	confirmation = strings.ToLower(confirmation)
+
+	if confirmation != "y" {
+		ExitEzPHP()
 	}
 
-	err = unzip(zipfile, i.Destination)
+	fmt.Printf("Downloading php from %v\n", source)
+	fmt.Println("Please wait...")
+
+	zipfile, err := download(source, installFolder)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	fmt.Println("Installing PHP version 7.4.10")
+
+	err = unzip(zipfile, installFolder)
+	if err != nil {
+		return "", err
+	}
+
+	abs, _ := filepath.Abs(installFolder)
+	fmt.Printf("PHP was succefully installed in %v\n", abs)
+
+	phpExe := fmt.Sprintf("%v/%v", installFolder, PHP_EXECUTABLE)
+
+	return phpExe, nil
 }
 
-func unzip(source, destination string) error {
+func download(source, installFolder string) (string, error) {
+
+	filename := path.Base(source)
+
+	if _, err := os.Stat(installFolder); os.IsNotExist(err) {
+		err = os.MkdirAll(installFolder, 0755)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	resp, err := http.Get(source)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	out, err := os.Create(installFolder + string(os.PathSeparator) + filename)
+	if err != nil {
+		return "", err
+	}
+	defer out.Close()
+
+	pb := &progressBar{
+		0,
+		resp.ContentLength,
+	}
+
+	_, err = io.Copy(out, io.TeeReader(resp.Body, pb))
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println("")
+
+	zipfile := installFolder + string(os.PathSeparator) + filename
+
+	return zipfile, nil
+}
+
+func unzip(source, installFolder string) error {
 
 	if _, err := os.Stat(source); os.IsNotExist(err) {
 		return err
@@ -66,7 +123,7 @@ func unzip(source, destination string) error {
 		return nil
 	}()
 
-	os.MkdirAll(destination, 0755)
+	os.MkdirAll(installFolder, 0755)
 
 	// Closure to address file descriptors issue with all the deferred .Close() methods
 	extractAndWriteFile := func(f *zip.File) error {
@@ -82,7 +139,7 @@ func unzip(source, destination string) error {
 			return nil
 		}()
 
-		path := filepath.Join(destination, f.Name)
+		path := filepath.Join(installFolder, f.Name)
 
 		if f.FileInfo().IsDir() {
 			os.MkdirAll(path, f.Mode())
@@ -116,43 +173,8 @@ func unzip(source, destination string) error {
 	return nil
 }
 
-func download(source, destination string, ioCom IOCom) (string, error) {
-
-	filename := path.Base(source)
-
-	if _, err := os.Stat(destination); os.IsNotExist(err) {
-		err = os.MkdirAll(destination, 0755)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	resp, err := http.Get(source)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	out, err := os.Create(destination + string(os.PathSeparator) + filename)
-	if err != nil {
-		return "", err
-	}
-	defer out.Close()
-
-	pb := &progressBar{
-		0,
-		resp.ContentLength,
-		ioCom,
-	}
-
-	_, err = io.Copy(out, io.TeeReader(resp.Body, pb))
-	if err != nil {
-		return "", err
-	}
-
-	ioCom.Stdout <- "\n"
-
-	zipfile := destination + string(os.PathSeparator) + filename
-
-	return zipfile, nil
+func ExitEzPHP() {
+	fmt.Print("Press 'Enter' to exit...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	os.Exit(0)
 }

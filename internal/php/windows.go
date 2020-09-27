@@ -2,4 +2,4 @@
 
 package php
 
-const EXECUTABLE = "php.exe"
+const PHP_EXECUTABLE = "php.exe"
