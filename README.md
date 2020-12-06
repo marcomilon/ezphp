@@ -4,11 +4,11 @@ EzPHP gives you a personal PHP webserver for development.
 
 The goal of the project is to provide a single **.exe** file that will get you a ready to use PHP development environment.
 
-EzPHP will install PHP v. 7.4.10 downloaded from https://windows.php.net/downloads/releases/php-7.4.10-nts-Win32-vc15-x64.zip
+EzPHP will install PHP v. 7.4.13 downloaded from https://windows.php.net/downloads/releases/php-7.4.13-nts-Win32-vc15-x64.zip
 
 ### Installation
 
-1. Download [ezphp.zip](https://github.com/marcomilon/ezphp/releases/download/1.2.0/ezphp.zip).
+1. Download [ezphp.zip](https://github.com/marcomilon/ezphp).
 2. Create a new folder for your project and copy ezphp.exe.
 3. Run ezphp.exe. If PHP is not installed locally ezphp will try to download and install PHP.
 4. Open your browser in http://localhost:8080. 

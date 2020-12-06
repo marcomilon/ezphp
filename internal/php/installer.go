@@ -31,7 +31,7 @@ func FastInstall(source, installFolder string) (string, error) {
 
 	var confirmation string
 
-	fmt.Print("Would you like to install PHP version 7.4.10? [y/N] ")
+	fmt.Print("Would you like to install PHP version 7.4.13? [y/N] ")
 	fmt.Scanln(&confirmation)
 
 	confirmation = strings.TrimSpace(confirmation)
@@ -68,18 +68,22 @@ func download(source, installFolder string) (string, error) {
 
 	filename := path.Base(source)
 
+	resp, err := http.Get(source)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("error %d\n", resp.StatusCode)
+	}
+
 	if _, err := os.Stat(installFolder); os.IsNotExist(err) {
 		err = os.MkdirAll(installFolder, 0755)
 		if err != nil {
 			return "", err
 		}
 	}
-
-	resp, err := http.Get(source)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
 
 	out, err := os.Create(installFolder + string(os.PathSeparator) + filename)
 	if err != nil {
