@@ -13,8 +13,8 @@ import (
 
 const (
 	ezPHPWebsite  = "https://github.com/marcomilon/ezphp"
-	downloadURL   = "https://windows.php.net/downloads/releases/php-7.4.13-nts-Win32-vc15-x64.zip"
-	installFolder = "php-7.4.13"
+	downloadURL   = "https://windows.php.net/downloads/releases/php-7.4.14-nts-Win32-vc15-x64.zip"
+	installFolder = "php-7.4.14"
 )
 
 func main() {

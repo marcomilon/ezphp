@@ -31,7 +31,7 @@ func FastInstall(source, installFolder string) (string, error) {
 
 	var confirmation string
 
-	fmt.Print("Would you like to install PHP version 7.4.13? [y/N] ")
+	fmt.Print("Would you like to install PHP version 7.4.14? [y/N] ")
 	fmt.Scanln(&confirmation)
 
 	confirmation = strings.TrimSpace(confirmation)
